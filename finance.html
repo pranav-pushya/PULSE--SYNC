@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Financial Command Center | PULSE-SYNC</title>
+  <meta name="description" content="Live currency exchange rates and cryptocurrency market tracking. Your financial command center powered by PULSE-SYNC." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📉</text></svg>" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Ambient Orbs -->
+  <div class="orb orb-1" style="background:rgba(245,158,11,0.06)"></div>
+  <div class="orb orb-2" style="background:rgba(255,0,170,0.05)"></div>
+
+  <!-- Page Hero -->
+  <section class="page-hero" id="finance-hero">
+    <div class="section-header">
+      <span class="section-tag">SECTION 02</span>
+      <h1 class="section-title" style="font-size: clamp(1.8rem, 5vw, 3rem);">Financial Command Center</h1>
+      <p class="section-desc">Real-time currency exchange & crypto market pulse</p>
+    </div>
+  </section>
+
+  <!-- Page Content -->
+  <div class="page-content">
+    <!-- Market Mood Banner -->
+    <div class="market-mood reveal" id="market-mood">
+      <div class="mood-emoji" id="mood-emoji">📊</div>
+      <div class="mood-indicator" id="mood-indicator">Analyzing Market...</div>
+      <p class="mood-description" id="mood-description">Calculating market sentiment from 24h price changes</p>
+    </div>
+
+    <div class="finance-grid">
+      <!-- Currency Panel -->
+      <div class="currency-panel reveal" id="currency-panel">
+        <h3 class="currency-title">💱 Currency Exchange</h3>
+        <div id="currency-content">
+          <div class="loading-skeleton loading-block" style="height:3rem;margin-bottom:1rem"></div>
+          <div class="loading-skeleton loading-text"></div>
+          <div class="loading-skeleton loading-text"></div>
+        </div>
+      </div>
+
+      <!-- Crypto Grid -->
+      <div class="crypto-section reveal delay-1" id="crypto-section">
+        <h3 class="currency-title">🪙 Crypto Markets</h3>
+        <div class="crypto-grid" id="crypto-grid">
+          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
+          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
+          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
+          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
+          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
+          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/finance.js"></script>
+</body>
+</html>

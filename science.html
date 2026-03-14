@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Science & Space Hub | PULSE-SYNC</title>
+  <meta name="description" content="NASA's Astronomy Picture of the Day, SpaceX launch countdowns, and live ISS tracking. Your Science & Space hub by PULSE-SYNC." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>" />
+  <link rel="stylesheet" href="/style.css" />
+  <!-- Leaflet CSS for ISS Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    /* Override Leaflet tiles for dark theme */
+    .leaflet-tile-pane { filter: brightness(0.7) contrast(1.1) saturate(0.8) hue-rotate(180deg) invert(1); }
+    .leaflet-container { background: var(--bg-secondary); }
+  </style>
+</head>
+<body>
+  <!-- Ambient Orbs -->
+  <div class="orb orb-1" style="background:rgba(139,92,246,0.06)"></div>
+  <div class="orb orb-2" style="background:rgba(0,240,255,0.05)"></div>
+
+  <!-- Page Hero -->
+  <section class="page-hero" id="science-hero">
+    <div class="section-header">
+      <span class="section-tag">SECTION 03</span>
+      <h1 class="section-title" style="font-size: clamp(1.8rem, 5vw, 3rem);">Science & Space Hub</h1>
+      <p class="section-desc">Explore the cosmos — from NASA's lens to SpaceX's launchpad</p>
+    </div>
+  </section>
+
+  <!-- Page Content -->
+  <div class="page-content">
+    <div class="science-layout">
+      <!-- NASA APOD -->
+      <div class="apod-card reveal" id="apod-card">
+        <div class="apod-image-wrapper" id="apod-image-wrapper">
+          <div class="loading-skeleton" style="width:100%;height:350px"></div>
+        </div>
+        <div class="apod-content" id="apod-content">
+          <div class="loading-skeleton loading-text" style="width:50%"></div>
+          <div class="loading-skeleton loading-text" style="width:30%"></div>
+          <div class="loading-skeleton loading-text" style="width:90%"></div>
+          <div class="loading-skeleton loading-text" style="width:80%"></div>
+        </div>
+      </div>
+
+      <!-- SpaceX + ISS -->
+      <div class="science-bottom">
+        <!-- SpaceX Next Launch -->
+        <div class="launch-card reveal delay-1" id="launch-card">
+          <div class="launch-label">🚀 SPACEX NEXT LAUNCH</div>
+          <h3 class="launch-name" id="launch-name">Loading...</h3>
+          <p class="launch-details" id="launch-details">Fetching next mission data...</p>
+          <div class="countdown" id="countdown">
+            <div class="countdown-item"><div class="countdown-value" id="cd-days">--</div><div class="countdown-label">Days</div></div>
+            <div class="countdown-item"><div class="countdown-value" id="cd-hours">--</div><div class="countdown-label">Hours</div></div>
+            <div class="countdown-item"><div class="countdown-value" id="cd-mins">--</div><div class="countdown-label">Mins</div></div>
+            <div class="countdown-item"><div class="countdown-value" id="cd-secs">--</div><div class="countdown-label">Secs</div></div>
+          </div>
+        </div>
+
+        <!-- ISS Tracker -->
+        <div class="iss-card reveal delay-2" id="iss-card">
+          <div class="iss-label">🛰️ ISS LIVE TRACKER</div>
+          <div class="iss-coords" id="iss-coords">
+            <div class="iss-coord">
+              <span class="iss-coord-label">Latitude</span>
+              <span class="iss-coord-value" id="iss-lat">Loading...</span>
+            </div>
+            <div class="iss-coord">
+              <span class="iss-coord-label">Longitude</span>
+              <span class="iss-coord-value" id="iss-lon">Loading...</span>
+            </div>
+          </div>
+          <div id="iss-map"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="/src/science.js"></script>
+</body>
+</html>

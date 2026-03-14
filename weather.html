@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather & News | PULSE-SYNC</title>
+  <meta name="description" content="Live weather tracking from your location with global tech and AI news feed. Powered by PULSE-SYNC." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Ambient Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- Page Hero -->
+  <section class="page-hero" id="weather-hero">
+    <div class="section-header">
+      <span class="section-tag">SECTION 01</span>
+      <h1 class="section-title" style="font-size: clamp(1.8rem, 5vw, 3rem);">Weather & Global Feed</h1>
+      <p class="section-desc">Real-time weather data from your location & latest tech headlines</p>
+    </div>
+  </section>
+
+  <!-- Page Content -->
+  <div class="page-content">
+    <div class="weather-layout">
+      <!-- Weather Panel -->
+      <div class="weather-main-card reveal" id="weather-card">
+        <div id="weather-loading">
+          <div class="weather-icon-large">🌤️</div>
+          <div class="loading-skeleton loading-block" style="height:4rem;width:60%;margin:0 auto 1rem"></div>
+          <div class="loading-skeleton loading-text" style="width:40%;margin:0 auto"></div>
+          <p style="color:var(--text-muted);margin-top:1rem;font-size:0.85rem">Requesting your location...</p>
+        </div>
+        <div id="weather-data" style="display:none"></div>
+      </div>
+
+      <!-- News Feed Panel -->
+      <div class="news-feed reveal delay-1" id="news-feed">
+        <h3 class="news-feed-title">📡 TECH & AI NEWS</h3>
+        <div id="news-list">
+          <div class="news-card"><div class="loading-skeleton loading-block"></div></div>
+          <div class="news-card"><div class="loading-skeleton loading-block"></div></div>
+          <div class="news-card"><div class="loading-skeleton loading-block"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/weather.js"></script>
+</body>
+</html>

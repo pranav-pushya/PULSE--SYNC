@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PULSE-SYNC | Your Real-Time Data Hub</title>
+  <meta name="description" content="PULSE-SYNC — A stunning real-time dashboard for Weather, Finance, and Space data. Your window to the world's pulse." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Ambient Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- ═══ HERO SECTION ═══ -->
+  <section class="hero-section" id="hero">
+    <canvas class="hero-particles" id="particle-canvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>⚡</span>
+        <span>REAL-TIME DATA DASHBOARD</span>
+      </div>
+      <h1 class="hero-title" id="hero-title">PULSE-SYNC</h1>
+      <p class="hero-subtitle">
+        Your window to the world's pulse — tracking
+        <span class="typed-text" id="typed-text"></span>
+      </p>
+    </div>
+    <div class="hero-scroll-indicator">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- ═══ NAVIGATION PORTALS ═══ -->
+  <section class="portals-section" id="portals">
+    <div class="section-header reveal">
+      <span class="section-tag">// EXPLORE</span>
+      <h2 class="section-title">Command Centers</h2>
+      <p class="section-desc">Dive into real-time data streams from across the globe and beyond</p>
+    </div>
+    <div class="portals-grid">
+      <!-- Weather Card -->
+      <a href="/weather.html" class="portal-card weather-card tilt-card reveal delay-1" id="portal-weather">
+        <div class="portal-icon">🌍</div>
+        <h3 class="portal-title">WEATHER & NEWS</h3>
+        <p class="portal-desc">Live weather tracking from your location with global tech news feed. Stay informed about the world around you.</p>
+        <div class="portal-tags">
+          <span class="portal-tag">Geolocation</span>
+          <span class="portal-tag">Live Data</span>
+          <span class="portal-tag">Tech News</span>
+        </div>
+        <div class="portal-arrow">
+          <span>Explore</span>
+          <span>→</span>
+        </div>
+      </a>
+      <!-- Finance Card -->
+      <a href="/finance.html" class="portal-card finance-card tilt-card reveal delay-2" id="portal-finance">
+        <div class="portal-icon">📉</div>
+        <h3 class="portal-title">FINANCIAL HUB</h3>
+        <p class="portal-desc">Real-time currency exchange rates and cryptocurrency market tracking. Watch the money flow.</p>
+        <div class="portal-tags">
+          <span class="portal-tag">USD/INR</span>
+          <span class="portal-tag">Crypto</span>
+          <span class="portal-tag">Markets</span>
+        </div>
+        <div class="portal-arrow">
+          <span>Explore</span>
+          <span>→</span>
+        </div>
+      </a>
+      <!-- Science Card -->
+      <a href="/science.html" class="portal-card science-card tilt-card reveal delay-3" id="portal-science">
+        <div class="portal-icon">🚀</div>
+        <h3 class="portal-title">SCIENCE & SPACE</h3>
+        <p class="portal-desc">NASA's daily cosmic photo, SpaceX launch countdowns, and ISS live tracking. Explore the final frontier.</p>
+        <div class="portal-tags">
+          <span class="portal-tag">NASA</span>
+          <span class="portal-tag">SpaceX</span>
+          <span class="portal-tag">ISS Live</span>
+        </div>
+        <div class="portal-arrow">
+          <span>Explore</span>
+          <span>→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══ WIDGETS SECTION ═══ -->
+  <section class="widgets-section" id="widgets">
+    <div class="section-header reveal">
+      <span class="section-tag">// DAILY FEED</span>
+      <h2 class="section-title">Quick Bites</h2>
+    </div>
+    <div class="widgets-grid">
+      <!-- Word of the Day -->
+      <div class="widget-card widget-word reveal delay-1" id="word-widget">
+        <div class="widget-header">
+          <span class="widget-icon">📖</span>
+          <span class="widget-label">Word of the Day</span>
+        </div>
+        <div id="word-content">
+          <div class="loading-skeleton loading-text" style="width:40%"></div>
+          <div class="loading-skeleton loading-text" style="width:20%"></div>
+          <div class="loading-skeleton loading-text" style="width:80%"></div>
+        </div>
+      </div>
+      <!-- Programming Joke -->
+      <div class="widget-card widget-joke reveal delay-2" id="joke-widget">
+        <div class="widget-header">
+          <span class="widget-icon">😂</span>
+          <span class="widget-label">Dev Joke</span>
+        </div>
+        <div id="joke-content">
+          <div class="loading-skeleton loading-text" style="width:90%"></div>
+          <div class="loading-skeleton loading-text" style="width:70%"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
