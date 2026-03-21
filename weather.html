@@ -15,6 +15,7 @@
   <div class="orb orb-2"></div>
 
   <!-- Page Hero -->
+  <main id="main-content">
   <section class="page-hero" id="weather-hero">
     <div class="section-header">
       <span class="section-tag">SECTION 01</span>
@@ -34,11 +35,12 @@
           <div class="loading-skeleton loading-text" style="width:40%;margin:0 auto"></div>
           <p style="color:var(--text-muted);margin-top:1rem;font-size:0.85rem">Requesting your location...</p>
         </div>
-        <div id="weather-data" style="display:none"></div>
+        <div id="weather-data" style="display:none" aria-live="polite"></div>
       </div>
     </div>
   </div>
 
+  </main>
   <script type="module" src="/src/weather.js"></script>
 </body>
 </html>

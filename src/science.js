@@ -1,7 +1,7 @@
-import { createNavbar } from './components/navbar.js';
-import { createFooter } from './components/footer.js';
-import { initScrollReveal } from './utils/animations.js';
-import { getNasaAPOD, getISSPosition } from './utils/api.js';
+import { createNavbar } from './head-foot/navbar.js';
+import { createFooter } from './head-foot/footer.js';
+import { initScrollReveal } from './api/animations.js';
+import { getNasaAPOD, getISSPosition } from './api/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // ─── Initialize cursor trail on this page ───

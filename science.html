@@ -18,10 +18,11 @@
 <body>
   <canvas id="cursor-trail" aria-hidden="true"></canvas>
   <!-- Ambient Orbs -->
-  <div class="orb orb-1" style="background:rgba(139,92,246,0.06)"></div>
-  <div class="orb orb-2" style="background:rgba(0,240,255,0.05)"></div>
+  <div class="orb orb-1 orb-science-1"></div>
+  <div class="orb orb-2 orb-science-2"></div>
 
   <!-- Page Hero -->
+  <main id="main-content">
   <section class="page-hero" id="science-hero">
     <div class="section-header">
       <span class="section-tag">SECTION 03</span>
@@ -49,7 +50,7 @@
       <!-- ISS Tracker -->
       <div class="iss-card reveal delay-2" id="iss-card">
         <div class="iss-label">🛰️ ISS LIVE TRACKER</div>
-        <div class="iss-coords" id="iss-coords">
+        <div class="iss-coords" id="iss-coords" aria-live="polite">
           <div class="iss-coord">
             <span class="iss-coord-label">Latitude</span>
             <span class="iss-coord-value" id="iss-lat">Loading...</span>
@@ -64,6 +65,7 @@
     </div>
   </div>
 
+  </main>
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module" src="/src/science.js"></script>

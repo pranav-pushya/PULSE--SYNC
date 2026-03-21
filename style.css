@@ -2096,3 +2096,7 @@ img {
   margin-top: 1.25rem;
   text-align: center;
 }
+
+/* ─── Science page orb colors ─── */
+.orb-science-1 { background: rgba(139, 92, 246, 0.06); }
+.orb-science-2 { background: rgba(0, 240, 255, 0.05); }

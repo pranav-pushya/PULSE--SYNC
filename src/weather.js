@@ -1,7 +1,7 @@
-import { createNavbar } from './components/navbar.js';
-import { createFooter } from './components/footer.js';
-import { initScrollReveal } from './utils/animations.js';
-import { getWeather, getCityName } from './utils/api.js';
+import { createNavbar } from './head-foot/navbar.js';
+import { createFooter } from './head-foot/footer.js';
+import { initScrollReveal } from './api/animations.js';
+import { getWeather, getCityName } from './api/api.js';
 
 // ═══════════════════════════════════════
 // WEATHER CODE MAP
