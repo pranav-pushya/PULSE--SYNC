@@ -5,7 +5,7 @@ import { getCurrencyRates, getCryptoPrices } from './api/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // ─── Initialize cursor trail on this page ───
-  const { initCursorTrail } = await import('./utils/animations.js');
+  const { initCursorTrail } = await import('./api/animations.js');
   initCursorTrail();
 
   createNavbar('finance');
