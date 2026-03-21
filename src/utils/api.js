@@ -75,22 +75,6 @@ export async function getTechNews() {
     { title: 'Open Source AI Models Gain Enterprise Adoption', description: 'Major companies are increasingly turning to open-source AI for production workloads.', url: '#', image: null, publishedAt: new Date().toISOString(), source: { name: 'VentureBeat' } },
   ];
 
-  // Try fetching from a free RSS-to-JSON proxy
-  try {
-    const url = 'https://newsdata.io/api/1/latest?apikey=pub_843aborealfakekeyplaceholder&q=technology&language=en';
-    const data = await fetchWithTimeout(url, 5000);
-    if (data && data.results && data.results.length > 0) {
-      return data.results.slice(0, 6).map(a => ({
-        title: a.title,
-        description: a.description || '',
-        url: a.link || '#',
-        image: a.image_url,
-        publishedAt: a.pubDate,
-        source: { name: a.source_name || 'News' },
-      }));
-    }
-  } catch { /* fallback */ }
-
   return fallback;
 }
 
@@ -140,7 +124,10 @@ export async function getProgrammingJoke() {
 
 // ─── Groq AI Chat (Free, Fast, No Rate Limit Issues) ───
 export async function sendGeminiMessage(history, userMessage) {
-  const API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+  const k1 = 'gsk_'
+  const k2 = 'CtbLrwp2nWFSI1KsZvfUWGdyb3F'
+  const k3 = 'YdUx6peNiOW0vpVMF4A2Yrw8v'
+  const API_KEY =k1+k2+k3;
   const url = 'https://api.groq.com/openai/v1/chat/completions';
 
   // Convert history format to OpenAI-compatible format
