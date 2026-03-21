@@ -3,7 +3,11 @@ import { createFooter } from './components/footer.js';
 import { initScrollReveal } from './utils/animations.js';
 import { getCurrencyRates, getCryptoPrices } from './utils/api.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // ─── Initialize cursor trail on this page ───
+  const { initCursorTrail } = await import('./utils/animations.js');
+  initCursorTrail();
+
   createNavbar('finance');
   createFooter();
   initScrollReveal();
@@ -11,7 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
   loadCrypto();
 });
 
-// ─── Currency Rates ───
+// ═══════════════════════════════════════
+// CURRENCY EXCHANGE RATES
+// Fetches live USD rates from open.er-api.com
+// Shows INR, EUR, GBP, JPY pairs
+// ═══════════════════════════════════════
 async function loadCurrency() {
   const container = document.getElementById('currency-content');
   const data = await getCurrencyRates();
@@ -46,7 +54,12 @@ async function loadCurrency() {
   `;
 }
 
-// ─── Crypto Prices ───
+// ═══════════════════════════════════════
+// CRYPTOCURRENCY PRICES
+// Fetches top 6 coins from CoinGecko API
+// Includes 7-day sparkline charts
+// Calculates market mood from avg 24h change
+// ═══════════════════════════════════════
 async function loadCrypto() {
   const grid = document.getElementById('crypto-grid');
   const coins = await getCryptoPrices();
@@ -86,12 +99,14 @@ async function loadCrypto() {
   updateMood(coins);
 }
 
+// ─── Helper: Format crypto price based on value range ───
 function formatPrice(price) {
   if (price >= 1000) return price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   if (price >= 1) return price.toFixed(2);
   return price.toFixed(4);
 }
 
+// ─── Helper: Generate inline SVG sparkline chart ───
 function renderSparkline(data, isPositive) {
   // Downsample to ~30 points
   const step = Math.max(1, Math.floor(data.length / 30));
@@ -122,6 +137,7 @@ function renderSparkline(data, isPositive) {
   `;
 }
 
+// ─── Helper: Calculate and display market sentiment ───
 function updateMood(coins) {
   const emoji = document.getElementById('mood-emoji');
   const indicator = document.getElementById('mood-indicator');

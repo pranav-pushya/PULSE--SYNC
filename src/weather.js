@@ -1,9 +1,13 @@
 import { createNavbar } from './components/navbar.js';
 import { createFooter } from './components/footer.js';
 import { initScrollReveal } from './utils/animations.js';
-import { getWeather, getCityName, getTechNews } from './utils/api.js';
+import { getWeather, getCityName } from './utils/api.js';
 
-// Weather code to description + emoji mapping
+// ═══════════════════════════════════════
+// WEATHER CODE MAP
+// Maps Open-Meteo weather codes to
+// human-readable descriptions and emojis
+// ═══════════════════════════════════════
 const weatherCodes = {
   0: { desc: 'Clear Sky', icon: '☀️' },
   1: { desc: 'Mainly Clear', icon: '🌤️' },
@@ -31,15 +35,23 @@ const weatherCodes = {
   99: { desc: 'Thunderstorm + Heavy Hail', icon: '⛈️' },
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // ─── Initialize cursor trail on this page ───
+  const { initCursorTrail } = await import('./utils/animations.js');
+  initCursorTrail();
+
   createNavbar('weather');
   createFooter();
   initScrollReveal();
   loadWeather();
-  loadNews();
 });
 
-// ─── Weather ───
+// ═══════════════════════════════════════
+// WEATHER DATA
+// Gets user geolocation, fetches real-time
+// weather from Open-Meteo API (free, no key needed)
+// Shows error state if location access denied
+// ═══════════════════════════════════════
 async function loadWeather() {
   const loadingEl = document.getElementById('weather-loading');
   const dataEl = document.getElementById('weather-data');
@@ -103,20 +115,3 @@ async function loadWeather() {
   }
 }
 
-// ─── News ───
-async function loadNews() {
-  const container = document.getElementById('news-list');
-  const articles = await getTechNews();
-
-  container.innerHTML = articles
-    .map(
-      (a) => `
-    <a href="${a.url}" target="_blank" rel="noopener" class="news-card">
-      <div class="news-source">${a.source.name}</div>
-      <h4 class="news-title">${a.title}</h4>
-      <p class="news-desc">${a.description || ''}</p>
-    </a>
-  `
-    )
-    .join('');
-}

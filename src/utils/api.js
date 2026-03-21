@@ -1,4 +1,17 @@
-// ─── API Configuration & Helpers ───
+// ═══════════════════════════════════════
+// API CONFIGURATION
+// Central file for all external API calls
+// APIs used:
+//   - Open-Meteo    : Weather (free, no key)
+//   - Nominatim     : Reverse geocoding (free)
+//   - open.er-api   : Currency rates (free)
+//   - CoinGecko     : Crypto prices (free)
+//   - NASA APOD     : Space photo (DEMO_KEY)
+//   - wheretheiss   : ISS position (free)
+//   - DictionaryAPI : Word definitions (free)
+//   - JokeAPI       : Programming jokes (free)
+//   - Gemini AI     : Chatbot (requires API key)
+// ═══════════════════════════════════════
 
 const API = {
   WEATHER: 'https://api.open-meteo.com/v1/forecast',
@@ -30,12 +43,13 @@ async function fetchWithTimeout(url, timeout = 8000) {
   }
 }
 
-// ─── Weather ───
+// ─── Weather: fetch forecast by coordinates ───
 export async function getWeather(lat, lon) {
   const url = `${API.WEATHER}?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
   return fetchWithTimeout(url);
 }
 
+// ─── Geocoding: get city name from coordinates ───
 export async function getCityName(lat, lon) {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
@@ -49,7 +63,7 @@ export async function getCityName(lat, lon) {
   }
 }
 
-// ─── News ───
+// ─── News: fetch tech headlines with fallback ───
 export async function getTechNews() {
   // Fallback news data
   const fallback = [
@@ -80,7 +94,7 @@ export async function getTechNews() {
   return fallback;
 }
 
-// ─── Currency ───
+// ─── Currency: fetch live USD exchange rates ───
 export async function getCurrencyRates() {
   const data = await fetchWithTimeout(API.CURRENCY);
   if (data && data.rates) {
@@ -95,51 +109,76 @@ export async function getCurrencyRates() {
   return null;
 }
 
-// ─── Crypto ───
+// ─── Crypto: fetch top 6 coins with sparklines ───
 export async function getCryptoPrices() {
   const url = `${API.CRYPTO}/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,cardano,ripple,dogecoin&order=market_cap_desc&per_page=6&sparkline=true&price_change_percentage=24h`;
   const data = await fetchWithTimeout(url);
   return data || [];
 }
 
-// ─── NASA ───
+// ─── NASA: fetch Astronomy Picture of the Day ───
 export async function getNasaAPOD() {
   const url = `${API.NASA_APOD}?api_key=${NASA_KEY}`;
   return fetchWithTimeout(url);
 }
 
-// ─── SpaceX ───
-export async function getNextLaunch() {
-  return fetchWithTimeout(API.SPACEX);
-}
 
-// ─── ISS ───
+// ─── ISS: fetch current International Space Station position ───
 export async function getISSPosition() {
   return fetchWithTimeout(API.ISS);
 }
 
-// ─── Word of the Day ───
-export async function getWordOfTheDay() {
-  const words = ['ephemeral', 'serendipity', 'ubiquitous', 'eloquent', 'resilient', 'pragmatic', 'paradigm', 'synergy', 'catalyst', 'ethereal', 'luminous', 'zenith', 'cascade', 'nexus', 'quantum'];
-  const dayIndex = new Date().getDate() % words.length;
-  const word = words[dayIndex];
-  const data = await fetchWithTimeout(`${API.WORD}/${word}`);
-  if (data && data[0]) {
-    return {
-      word: data[0].word,
-      phonetic: data[0].phonetic || '',
-      meaning: data[0].meanings?.[0]?.definitions?.[0]?.definition || 'No definition available.',
-      partOfSpeech: data[0].meanings?.[0]?.partOfSpeech || '',
-    };
-  }
-  return { word, phonetic: '', meaning: 'Could not load definition.', partOfSpeech: '' };
-}
 
-// ─── Joke ───
+// ─── Joke: fetch random programming joke ───
 export async function getProgrammingJoke() {
   const data = await fetchWithTimeout(`${API.JOKE}?type=twopart`);
   if (data && !data.error) {
     return { setup: data.setup, delivery: data.delivery };
   }
   return { setup: 'Why do programmers prefer dark mode?', delivery: 'Because light attracts bugs! 🐛' };
+}
+
+// ─── Groq AI Chat (Free, Fast, No Rate Limit Issues) ───
+export async function sendGeminiMessage(history, userMessage) {
+  const API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+  const url = 'https://api.groq.com/openai/v1/chat/completions';
+
+  // Convert history format to OpenAI-compatible format
+  const messages = [
+    {
+      role: 'system',
+      content: 'You are PULSE, an AI assistant for the PULSE-SYNC real-time data dashboard. Be concise, helpful, and slightly futuristic in tone. You help users with tech news, weather, finance, and space topics.'
+    },
+    ...history.map(h => ({
+      role: h.role === 'model' ? 'assistant' : h.role,
+      content: h.parts[0].text
+    })),
+    {
+      role: 'user',
+      content: userMessage
+    }
+  ];
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        messages,
+        max_tokens: 300,
+        temperature: 0.7
+      })
+    });
+
+    if (!res.ok) throw new Error(`Groq API error: ${res.status}`);
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || 'Sorry, I could not process that.';
+  } catch (err) {
+    console.warn('Groq error:', err.message);
+    return 'Connection issue. Please try again.';
+  }
 }

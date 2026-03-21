@@ -9,13 +9,14 @@
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
+  <canvas id="cursor-trail" aria-hidden="true"></canvas>
   <!-- Ambient Orbs -->
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
 
   <!-- ═══ HERO SECTION ═══ -->
-  <section class="hero-section" id="hero">
+  <section class="hero-section" id="hero" aria-label="Hero">
     <canvas class="hero-particles" id="particle-canvas"></canvas>
     <div class="hero-content">
       <div class="hero-badge">
@@ -33,23 +34,85 @@
     </div>
   </section>
 
-  <!-- ═══ NAVIGATION PORTALS ═══ -->
-  <section class="portals-section" id="portals">
+  <!-- ABOUT SECTION -->
+  <section class="about-section" id="about" aria-label="About PULSE-SYNC">
+    <div class="about-container reveal">
+      <div class="about-tag-row">
+        <span class="section-tag">ABOUT</span>
+      </div>
+      <h2 class="about-title">What is PULSE-SYNC?</h2>
+      <p class="about-desc">
+        Pulse-Sync is a customizable web dashboard designed to aggregate real-time data from multiple sources into a single interface. By utilizing public APIs such as OpenWeather, NewsAPI, and CryptoCompare, the application displays live updates via interactive widgets. The project demonstrates core Front-End Engineering concepts, specifically focusing on Asynchronous JavaScript (Promises, Async/Await) for efficient data fetching and advanced DOM manipulation for dynamic content rendering without page reloads.
+      </p>
+      <div class="about-tags">
+        <span class="about-tag">Async/Await</span>
+        <span class="about-tag">DOM Manipulation</span>
+        <span class="about-tag">REST APIs</span>
+        <span class="about-tag">Real-Time Data</span>
+        <span class="about-tag">Vanilla JS</span>
+        <span class="about-tag">CSS Grid</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCROLL 1 — NEWS & CHATBOT -->
+  <section class="news-chat-section" id="news-chat" aria-label="News and Chat">
     <div class="section-header reveal">
-      <span class="section-tag">// EXPLORE</span>
-      <h2 class="section-title">Command Centers</h2>
+      <span class="section-tag"><!--// LIVE FEED--></span>
+      <h2 class="section-title">News & Assistant</h2>
+      <p class="section-desc">Latest tech headlines alongside your AI-powered assistant</p>
+    </div>
+    <div class="news-chat-grid">
+      <!-- Left: Tech News -->
+      <div class="news-panel reveal delay-1" id="news-panel">
+        <div class="panel-header">
+          <span class="panel-icon">📡</span>
+          <h3 class="panel-title">TECH NEWS</h3>
+        </div>
+        <div id="home-news-list">
+          <div class="news-card"><div class="loading-skeleton loading-block"></div></div>
+          <div class="news-card"><div class="loading-skeleton loading-block"></div></div>
+          <div class="news-card"><div class="loading-skeleton loading-block"></div></div>
+        </div>
+      </div>
+      <!-- Right: Gemini Chatbot -->
+      <div class="chatbot-panel reveal delay-2" id="chatbot-panel" aria-label="AI Assistant">
+        <div class="panel-header">
+          <span class="panel-icon">🤖</span>
+          <h3 class="panel-title">AI ASSISTANT</h3>
+          <span class="chatbot-status" id="chatbot-status">● Online</span>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages" role="log" aria-live="polite">
+          <div class="chat-msg bot">
+            <span class="chat-avatar">⚡</span>
+            <p>Hey! I'm PULSE, your AI assistant. Ask me anything about tech, news, weather, or anything on your mind.</p>
+          </div>
+        </div>
+        <div class="chatbot-input-row">
+          <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Ask anything..." aria-label="Chat input" maxlength="500" />
+          <button id="chatbot-send" class="chatbot-send-btn" aria-label="Send message">→</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ NAVIGATION PORTALS ═══ -->
+  <section class="portals-section" id="portals" aria-label="Command Centre">
+    <div class="section-header reveal">
+      <span class="section-tag">EXPLORE</span>
+      <h2 class="section-title">Command Centre</h2>
       <p class="section-desc">Dive into real-time data streams from across the globe and beyond</p>
     </div>
     <div class="portals-grid">
       <!-- Weather Card -->
       <a href="/weather.html" class="portal-card weather-card tilt-card reveal delay-1" id="portal-weather">
         <div class="portal-icon">🌍</div>
-        <h3 class="portal-title">WEATHER & NEWS</h3>
-        <p class="portal-desc">Live weather tracking from your location with global tech news feed. Stay informed about the world around you.</p>
+        <h3 class="portal-title">WEATHER</h3>
+        <p class="portal-desc">Live weather tracking from your exact location. Real-time temperature, humidity, wind speed and daily forecast.</p>
         <div class="portal-tags">
           <span class="portal-tag">Geolocation</span>
           <span class="portal-tag">Live Data</span>
-          <span class="portal-tag">Tech News</span>
+          <span class="portal-tag">Forecast</span>
         </div>
         <div class="portal-arrow">
           <span>Explore</span>
@@ -73,13 +136,13 @@
       </a>
       <!-- Science Card -->
       <a href="/science.html" class="portal-card science-card tilt-card reveal delay-3" id="portal-science">
-        <div class="portal-icon">🚀</div>
-        <h3 class="portal-title">SCIENCE & SPACE</h3>
-        <p class="portal-desc">NASA's daily cosmic photo, SpaceX launch countdowns, and ISS live tracking. Explore the final frontier.</p>
+        <div class="portal-icon">🔭</div>
+        <h3 class="portal-title">SCIENCE &amp; SPACE</h3>
+        <p class="portal-desc">NASA's daily cosmic photo and live ISS tracking. Explore the final frontier.</p>
         <div class="portal-tags">
           <span class="portal-tag">NASA</span>
-          <span class="portal-tag">SpaceX</span>
           <span class="portal-tag">ISS Live</span>
+          <span class="portal-tag">Cosmos</span>
         </div>
         <div class="portal-arrow">
           <span>Explore</span>
@@ -89,36 +152,23 @@
     </div>
   </section>
 
-  <!-- ═══ WIDGETS SECTION ═══ -->
-  <section class="widgets-section" id="widgets">
+  <!-- SCROLL 3 — DEV JOKE -->
+  <section class="widgets-section" id="widgets" aria-label="Daily Feed">
     <div class="section-header reveal">
-      <span class="section-tag">// DAILY FEED</span>
+      <!-- <span class="section-tag">DAILY FEED</span> -->
       <h2 class="section-title">Quick Bites</h2>
+      <p class="section-desc">A little something to brighten your dev day</p>
     </div>
-    <div class="widgets-grid">
-      <!-- Word of the Day -->
-      <div class="widget-card widget-word reveal delay-1" id="word-widget">
-        <div class="widget-header">
-          <span class="widget-icon">📖</span>
-          <span class="widget-label">Word of the Day</span>
-        </div>
-        <div id="word-content">
-          <div class="loading-skeleton loading-text" style="width:40%"></div>
-          <div class="loading-skeleton loading-text" style="width:20%"></div>
-          <div class="loading-skeleton loading-text" style="width:80%"></div>
-        </div>
+    <div class="joke-full-card reveal delay-1" id="joke-widget">
+      <div class="joke-header">
+        <span class="widget-icon">😂</span>
+        <span class="widget-label">Dev Joke of the Day</span>
       </div>
-      <!-- Programming Joke -->
-      <div class="widget-card widget-joke reveal delay-2" id="joke-widget">
-        <div class="widget-header">
-          <span class="widget-icon">😂</span>
-          <span class="widget-label">Dev Joke</span>
-        </div>
-        <div id="joke-content">
-          <div class="loading-skeleton loading-text" style="width:90%"></div>
-          <div class="loading-skeleton loading-text" style="width:70%"></div>
-        </div>
+      <div id="joke-content">
+        <div class="loading-skeleton loading-text" style="width:80%"></div>
+        <div class="loading-skeleton loading-text" style="width:60%"></div>
       </div>
+      <p class="joke-desc">Because every developer deserves a laugh between the bugs 🐛</p>
     </div>
   </section>
 

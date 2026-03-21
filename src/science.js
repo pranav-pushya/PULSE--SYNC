@@ -1,18 +1,25 @@
 import { createNavbar } from './components/navbar.js';
 import { createFooter } from './components/footer.js';
 import { initScrollReveal } from './utils/animations.js';
-import { getNasaAPOD, getNextLaunch, getISSPosition } from './utils/api.js';
+import { getNasaAPOD, getISSPosition } from './utils/api.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // ─── Initialize cursor trail on this page ───
+  const { initCursorTrail } = await import('./utils/animations.js');
+  initCursorTrail();
+
   createNavbar('science');
   createFooter();
   initScrollReveal();
   loadAPOD();
-  loadSpaceXLaunch();
   initISSTracker();
 });
 
-// ─── NASA Astronomy Picture of the Day ───
+// ═══════════════════════════════════════
+// NASA ASTRONOMY PICTURE OF THE DAY
+// Uses NASA DEMO_KEY (free, 30 req/hour limit)
+// Handles both image and video media types
+// ═══════════════════════════════════════
 async function loadAPOD() {
   const imageWrapper = document.getElementById('apod-image-wrapper');
   const contentEl = document.getElementById('apod-content');
@@ -37,56 +44,12 @@ async function loadAPOD() {
   `;
 }
 
-// ─── SpaceX Next Launch ───
-let launchDate = null;
 
-async function loadSpaceXLaunch() {
-  const nameEl = document.getElementById('launch-name');
-  const detailsEl = document.getElementById('launch-details');
-  const data = await getNextLaunch();
-
-  if (!data) {
-    nameEl.textContent = 'Data Unavailable';
-    detailsEl.textContent = 'Could not fetch next SpaceX launch.';
-    return;
-  }
-
-  nameEl.textContent = data.name || 'Upcoming Mission';
-  detailsEl.textContent = data.details || `Flight #${data.flight_number || '?'} — Waiting for mission details`;
-  
-  if (data.date_utc) {
-    launchDate = new Date(data.date_utc);
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  }
-}
-
-function updateCountdown() {
-  if (!launchDate) return;
-
-  const now = new Date();
-  const diff = launchDate - now;
-
-  if (diff <= 0) {
-    document.getElementById('cd-days').textContent = '00';
-    document.getElementById('cd-hours').textContent = '00';
-    document.getElementById('cd-mins').textContent = '00';
-    document.getElementById('cd-secs').textContent = '00';
-    return;
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const secs = Math.floor((diff % (1000 * 60)) / 1000);
-
-  document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
-  document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
-  document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
-  document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
-}
-
-// ─── ISS Live Tracker (Leaflet Map) ───
+// ═══════════════════════════════════════
+// ISS LIVE TRACKER
+// Fetches ISS position every 5 seconds
+// Renders on Leaflet.js map with flight path
+// ═══════════════════════════════════════
 let issMap = null;
 let issMarker = null;
 let issPath = [];
@@ -121,6 +84,7 @@ async function initISSTracker() {
   setInterval(updateISS, 5000);
 }
 
+// ─── Helper: Fetch latest ISS coordinates and update map ───
 async function updateISS() {
   const data = await getISSPosition();
   if (!data || !data.latitude || !data.longitude) return;
