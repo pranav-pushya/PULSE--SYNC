@@ -24,7 +24,7 @@ export function createFooter() {
         <p>Team Credits</p>
         <p class="footer-tech">Leader : Pranav Pushya</p>
         <p class="footer-tech">Designer : Shubhangi Savant</p>
-        <p class="footer-tech">Linker : Atharva Bhandari</p>
+        <p class="footer-tech">Structure & Linker : Atharva Bhandari</p>
       </div>
     </div>
     <div class="footer-bottom">
