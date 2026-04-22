@@ -9,11 +9,12 @@
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
+  <div class="aurora">
+    <div class="aurora-layer aurora-1"></div>
+    <div class="aurora-layer aurora-2"></div>
+    <div class="aurora-layer aurora-3"></div>
+  </div>
   <canvas id="cursor-trail" aria-hidden="true"></canvas>
-  <!-- Ambient Orbs -->
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
 
   <!-- ═══ HERO SECTION ═══ -->
   <main id="main-content">
@@ -21,17 +22,36 @@
     <canvas class="hero-particles" id="particle-canvas"></canvas>
     <div class="hero-content">
       <div class="hero-badge">
-        <span>⚡</span>
-        <span>REAL-TIME DATA DASHBOARD</span>
+        <span class="badge-dot"></span>
+        <span>LIVE DATA DASHBOARD</span>
       </div>
       <h1 class="hero-title" id="hero-title">PULSE-SYNC</h1>
-      <p class="hero-subtitle">
-        Your window to the world's pulse — tracking
-        <span class="typed-text" id="typed-text"></span>
-      </p>
+      <p class="hero-subtitle">The only tab you need between lectures.</p>
+      <p class="hero-tagline">Tech news, AI assistant, live markets, weather & space — all in one place.</p>
     </div>
     <div class="hero-scroll-indicator">
       <span></span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-number">9</span>
+        <span class="stat-label">Live APIs</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="stat-number">4</span>
+        <span class="stat-label">Pages</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="stat-number">AI</span>
+        <span class="stat-label">Powered</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="stat-number">∞</span>
+        <span class="stat-label">Real-Time</span>
+      </div>
     </div>
   </section>
 
@@ -42,9 +62,7 @@
         <span class="section-tag">ABOUT</span>
       </div>
       <h2 class="about-title">What is PULSE-SYNC?</h2>
-      <p class="about-desc">
-        Pulse-Sync is a customizable web dashboard designed to aggregate real-time data from multiple sources into a single interface. By utilizing public APIs such as OpenWeather, NewsAPI, and CryptoCompare, the application displays live updates via interactive widgets. The project demonstrates core Front-End Engineering concepts, specifically focusing on Asynchronous JavaScript (Promises, Async/Await) for efficient data fetching and advanced DOM manipulation for dynamic content rendering without page reloads.
-      </p>
+      <p class="about-desc">Built for CS students who want to stay informed without switching between 10 tabs. PULSE-SYNC aggregates real-time data from trusted sources — tech news, live markets, weather, and space — so you can focus on what matters.</p>
       <div class="about-tags">
         <span class="about-tag">Async/Await</span>
         <span class="about-tag">DOM Manipulation</span>

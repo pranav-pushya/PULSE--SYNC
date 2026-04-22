@@ -64,7 +64,7 @@ export function initParticles(canvasId) {
   function init() {
     resize();
     particles = [];
-    const count = Math.min(Math.floor((canvas.width * canvas.height) / 8000), 150);
+    const count = Math.min(Math.floor((canvas.width * canvas.height) / 8000), 60);
     for (let i = 0; i < count; i++) {
       particles.push(new Particle());
     }
@@ -103,7 +103,7 @@ export function initParticles(canvasId) {
   window.addEventListener('resize', () => {
     resize();
     particles = [];
-    const count = Math.min(Math.floor((canvas.width * canvas.height) / 8000), 150);
+    const count = Math.min(Math.floor((canvas.width * canvas.height) / 8000), 60);
     for (let i = 0; i < count; i++) {
       particles.push(new Particle());
     }
@@ -165,7 +165,7 @@ export function initTiltCards() {
   });
 }
 
-// ─── Wormhole: black hole cursor particle effect ───
+// ─── Wormhole Black Hole Cursor Effect ───
 export function initCursorTrail() {
   const canvas = document.getElementById('cursor-trail');
   if (!canvas) return;
@@ -186,14 +186,12 @@ export function initCursorTrail() {
     height = canvas.height = window.innerHeight;
   });
 
-  // Mouse position
   const mouse = { x: width / 2, y: height / 2 };
   window.addEventListener('mousemove', (e) => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
   });
 
-  // Particle pool
   const PARTICLE_COUNT = 200;
   const particles = [];
 
@@ -201,59 +199,42 @@ export function initCursorTrail() {
     constructor() {
       this.reset(true);
     }
-
     reset(initial = false) {
-      // Spawn at random position on screen
       this.x = Math.random() * width;
       this.y = Math.random() * height;
       this.size = Math.random() * 2.5 + 0.5;
       this.speedX = (Math.random() - 0.5) * 0.4;
       this.speedY = (Math.random() - 0.5) * 0.4;
       this.opacity = Math.random() * 0.5 + 0.2;
-      this.sucked = false;
       this.angle = Math.random() * Math.PI * 2;
       this.spiralRadius = Math.random() * 60 + 20;
       this.spiralSpeed = (Math.random() * 0.04 + 0.02) * (Math.random() > 0.5 ? 1 : -1);
       this.pullStrength = 0;
     }
-
     update() {
       const dx = mouse.x - this.x;
       const dy = mouse.y - this.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-
       if (dist < 280) {
-        // Being pulled into wormhole
         this.pullStrength = Math.min(this.pullStrength + 0.04, 1);
         this.angle += this.spiralSpeed * (1 + this.pullStrength * 4);
         const targetRadius = this.spiralRadius * (1 - this.pullStrength * 0.95);
-
-        // Spiral toward cursor
         this.x += (mouse.x + Math.cos(this.angle) * targetRadius - this.x) * (0.10 + this.pullStrength * 0.18);
         this.y += (mouse.y + Math.sin(this.angle) * targetRadius - this.y) * (0.10 + this.pullStrength * 0.18);
         this.size = Math.max(0.2, this.size * (1 - this.pullStrength * 0.03));
         this.opacity = Math.max(0, this.opacity - this.pullStrength * 0.025);
-
-        // Consumed — respawn
-        if (this.opacity <= 0 || targetRadius < 2) {
-          this.reset();
-        }
+        if (this.opacity <= 0 || targetRadius < 2) this.reset();
       } else {
-        // Float freely
         this.pullStrength = Math.max(0, this.pullStrength - 0.02);
         this.x += this.speedX;
         this.y += this.speedY;
-
-        // Wrap around edges
         if (this.x < 0) this.x = width;
         if (this.x > width) this.x = 0;
         if (this.y < 0) this.y = height;
         if (this.y > height) this.y = 0;
       }
     }
-
     draw() {
-      // Color shifts from cyan to purple as particle gets sucked in
       const r = Math.floor(this.pullStrength * 180);
       const g = Math.floor(240 * (1 - this.pullStrength * 0.6));
       const b = 255;
@@ -264,33 +245,12 @@ export function initCursorTrail() {
     }
   }
 
-  // Initialize particles
   for (let i = 0; i < PARTICLE_COUNT; i++) {
     particles.push(new Particle());
   }
 
-  // Draw wormhole glow at cursor
-  function drawWormhole() {
-    const gradient = ctx.createRadialGradient(
-      mouse.x, mouse.y, 0,
-      mouse.x, mouse.y, 55
-    );
-    gradient.addColorStop(0, 'rgba(120, 0, 255, 0.18)');
-    gradient.addColorStop(0.4, 'rgba(0, 240, 255, 0.08)');
-    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-    ctx.beginPath();
-    ctx.arc(mouse.x, mouse.y, 55, 0, Math.PI * 2);
-    ctx.fillStyle = gradient;
-    ctx.fill();
-
-
-  }
-
-  // Animation loop
   function animate() {
     ctx.clearRect(0, 0, width, height);
-    drawWormhole();
     particles.forEach(p => {
       p.update();
       p.draw();

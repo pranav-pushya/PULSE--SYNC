@@ -6,7 +6,7 @@ export function createNavbar(activePage = '') {
   nav.id = 'main-navbar';
   nav.innerHTML = `
     <a href="/" class="nav-logo" id="nav-logo">
-      <span class="logo-pulse">PULSE</span><span class="logo-sync">-SYNC</span>
+      <span class="logo-pulse" style="color: var(--aurora-green);">PULSE</span><span class="logo-sync" style="color: var(--text-secondary);">-SYNC</span>
     </a>
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
       <span></span><span></span><span></span>
@@ -16,6 +16,7 @@ export function createNavbar(activePage = '') {
       <li><a href="/weather.html" class="${activePage === 'weather' ? 'active' : ''}" id="nav-weather">Weather</a></li>
       <li><a href="/finance.html" class="${activePage === 'finance' ? 'active' : ''}" id="nav-finance">Finance</a></li>
       <li><a href="/science.html" class="${activePage === 'science' ? 'active' : ''}" id="nav-science">Science</a></li>
+      <li><button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☀️</button></li>
     </ul>
   `;
 
@@ -39,5 +40,20 @@ export function createNavbar(activePage = '') {
       nav.classList.remove('scrolled');
     }
     lastScrollY = currentScrollY;
+  });
+
+  // Theme toggle logic
+  const themeToggle = nav.querySelector('#theme-toggle');
+  const storedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', storedTheme);
+  themeToggle.textContent = storedTheme === 'light' ? '🌙' : '☀️';
+
+  themeToggle.addEventListener('click', () => {
+    let currentTheme = document.documentElement.getAttribute('data-theme');
+    let targetTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', targetTheme);
+    localStorage.setItem('theme', targetTheme);
+    themeToggle.textContent = targetTheme === 'light' ? '🌙' : '☀️';
   });
 }
