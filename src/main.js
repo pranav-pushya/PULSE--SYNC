@@ -15,10 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initParticles('particle-canvas');
   initScrollReveal();
   initTiltCards();
+  initCardSpotlight();
   loadTypewriter();
   loadHomeNews();
   initChatbot();
   loadJoke();
+  loadCSFacts();
 });
 
 // ═══════════════════════════════════════
@@ -89,6 +91,44 @@ async function loadJoke() {
     <p class="joke-setup">${joke.setup}</p>
     <p class="joke-delivery">${joke.delivery}</p>
   `;
+}
+
+// ─── CS Facts & Tricks ───
+const CS_FACTS = [
+  { category: 'Networks', icon: '🌐', fact: 'The first internet message ever sent was "LO" — the system crashed before "LOGIN" could be completed. That was in 1969.' },
+  { category: 'AI', icon: '🤖', fact: 'GPT-4 has approximately 1.8 trillion parameters — trained on data that would take a human over 2,000 years to read.' },
+  { category: 'OS', icon: '💻', fact: 'Linux powers 96.3% of the top 1 million web servers in the world — and it was started by a 21-year-old student in 1991.' },
+  { category: 'Security', icon: '🔐', fact: 'The most common password in 2023 was still "123456" — used by over 4.5 million people despite being cracked in under 1 second.' },
+  { category: 'Data Structures', icon: '📊', fact: 'Google uses a PageRank algorithm — essentially a graph traversal problem — to rank billions of web pages in milliseconds.' },
+  { category: 'Programming', icon: '⚡', fact: 'The first computer bug was an actual bug — a moth found in a Harvard relay computer in 1947. Grace Hopper taped it in the logbook.' },
+  { category: 'Web', icon: '🕸️', fact: 'The first website ever created is still live at info.cern.ch — created by Tim Berners-Lee in 1991 at CERN.' },
+  { category: 'Hardware', icon: '🔧', fact: 'Modern CPUs execute over 3 billion instructions per second — yet they still follow the same fetch-decode-execute cycle from the 1940s.' },
+  { category: 'Algorithms', icon: '🧮', fact: 'Dijkstra designed his shortest path algorithm in 20 minutes at a cafe in 1956 — without pen or paper — just in his head.' },
+  { category: 'Database', icon: '🗄️', fact: 'SQL was designed in the 1970s and is still the most widely used database language — over 50 years later with no signs of stopping.' },
+  { category: 'Cloud', icon: '☁️', fact: 'Amazon Web Services started because Amazon built their own infrastructure and realized they could rent the excess capacity to others.' },
+  { category: 'Mobile', icon: '📱', fact: 'The Apollo 11 guidance computer had 4KB of RAM and 72KB of storage — your calculator watch has more computing power.' },
+  { category: 'Networking', icon: '📡', fact: 'IPv4 has about 4.3 billion addresses — all of which are now exhausted. IPv6 has 340 undecillion addresses — enough for every atom on Earth.' },
+  { category: 'Cryptography', icon: '🔑', fact: 'HTTPS encrypts your data using math so complex that even a supercomputer would take longer than the age of the universe to crack it.' },
+  { category: 'Open Source', icon: '🐧', fact: 'The Android operating system — running on 3 billion devices — is built on the Linux kernel, which is open source and free.' },
+];
+
+function loadCSFacts() {
+  const grid = document.getElementById('cs-facts-grid');
+  if (!grid) return;
+
+  // Pick 3 random unique facts
+  const shuffled = [...CS_FACTS].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, 3);
+
+  grid.innerHTML = selected.map((fact, index) => `
+    <div class="cs-fact-card">
+      <div class="cs-fact-header">
+        <span class="cs-fact-icon">${fact.icon}</span>
+        <span class="cs-fact-category">${fact.category}</span>
+      </div>
+      <p class="cs-fact-text">${fact.fact}</p>
+    </div>
+  `).join('');
 }
 
 // ═══════════════════════════════════════
@@ -169,4 +209,18 @@ function showTyping(container) {
 function removeTyping(id, container) {
   const el = document.getElementById(id);
   if (el) el.remove();
+}
+
+// ─── Spotlight effect on flip cards ───
+function initCardSpotlight() {
+  const cards = document.querySelectorAll('.flip-card-front');
+  cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mouse-x', `${x}%`);
+      card.style.setProperty('--mouse-y', `${y}%`);
+    });
+  });
 }

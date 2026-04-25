@@ -28,58 +28,119 @@
       <h1 class="hero-title" id="hero-title">PULSE-SYNC</h1>
       <p class="hero-subtitle">The only tab you need between lectures.</p>
       <p class="hero-tagline">Tech news, AI assistant, live markets, weather & space — all in one place.</p>
+  <div class="hero-features">
+    <button class="hero-feature" onclick="document.getElementById('weather-toggle').click()">
+      <span class="feature-icon">🌤️</span>
+      <span class="feature-label">Live Weather</span>
+    </button>
+    <a href="#news-chat" class="hero-feature">
+      <span class="feature-icon">📰</span>
+      <span class="feature-label">Tech News</span>
+    </a>
+    <a href="#news-chat" class="hero-feature">
+      <span class="feature-icon">🤖</span>
+      <span class="feature-label">PULSE AI</span>
+    </a>
+    <a href="/finance.html" class="hero-feature">
+      <span class="feature-icon">📈</span>
+      <span class="feature-label">Live Markets</span>
+    </a>
+    <a href="/science.html" class="hero-feature">
+      <span class="feature-icon">🔭</span>
+      <span class="feature-label">Space & NASA</span>
+    </a>
+  </div>
     </div>
     <div class="hero-scroll-indicator">
       <span></span>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <span class="stat-number">9</span>
-        <span class="stat-label">Live APIs</span>
-      </div>
-      <div class="hero-stat-divider"></div>
-      <div class="hero-stat">
-        <span class="stat-number">4</span>
-        <span class="stat-label">Pages</span>
-      </div>
-      <div class="hero-stat-divider"></div>
-      <div class="hero-stat">
-        <span class="stat-number">AI</span>
-        <span class="stat-label">Powered</span>
-      </div>
-      <div class="hero-stat-divider"></div>
-      <div class="hero-stat">
-        <span class="stat-number">∞</span>
-        <span class="stat-label">Real-Time</span>
-      </div>
     </div>
   </section>
 
   <!-- ABOUT SECTION -->
   <section class="about-section" id="about" aria-label="About PULSE-SYNC">
-    <div class="about-container reveal">
-      <div class="about-tag-row">
-        <span class="section-tag">ABOUT</span>
+    <div class="section-header reveal">
+      <span class="section-tag">ABOUT</span>
+      <h2 class="section-title">What is PULSE-SYNC?</h2>
+      <p class="section-desc">Built for CS students who want to stay informed without switching between 10 tabs.</p>
+    </div>
+
+    <div class="flip-cards-grid">
+
+      <div class="flip-card reveal delay-1">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="flip-card-icon">⚡</div>
+            <h3 class="flip-card-title">Real-Time Data</h3>
+            <p class="flip-card-hint">Hover to explore →</p>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="flip-card-back-title">Real-Time Data</h3>
+            <p class="flip-card-back-desc">Live weather, crypto prices, currency rates, and space data — updated every minute from 9 trusted public APIs. No refresh needed.</p>
+            <div class="flip-card-tags">
+              <span>Open-Meteo</span>
+              <span>CoinGecko</span>
+              <span>NASA</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <h2 class="about-title">What is PULSE-SYNC?</h2>
-      <p class="about-desc">Built for CS students who want to stay informed without switching between 10 tabs. PULSE-SYNC aggregates real-time data from trusted sources — tech news, live markets, weather, and space — so you can focus on what matters.</p>
-      <div class="about-tags">
-        <span class="about-tag">Async/Await</span>
-        <span class="about-tag">DOM Manipulation</span>
-        <span class="about-tag">REST APIs</span>
-        <span class="about-tag">Real-Time Data</span>
-        <span class="about-tag">Vanilla JS</span>
-        <span class="about-tag">CSS Grid</span>
+
+      <div class="flip-card reveal delay-2">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="flip-card-icon">🤖</div>
+            <h3 class="flip-card-title">PULSE AI</h3>
+            <p class="flip-card-hint">Hover to explore →</p>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="flip-card-back-title">PULSE AI</h3>
+            <p class="flip-card-back-desc">Powered by Groq AI — ask anything about tech, news, career, or just chat. Instant responses. Always available between lectures.</p>
+            <div class="flip-card-tags">
+              <span>Groq API</span>
+              <span>llama-3.1</span>
+              <span>Free</span>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div class="flip-card reveal delay-3">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <div class="flip-card-icon">🔭</div>
+            <h3 class="flip-card-title">Explore & Discover</h3>
+            <p class="flip-card-hint">Hover to explore →</p>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="flip-card-back-title">Explore & Discover</h3>
+            <p class="flip-card-back-desc">Tech timeline, GitHub trending, CS career paths, space news, and daily CS facts — built to keep curious minds engaged.</p>
+            <div class="flip-card-tags">
+              <span>GitHub</span>
+              <span>NASA</span>
+              <span>CS Facts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="about-tags reveal">
+      <span class="about-tag">Async/Await</span>
+      <span class="about-tag">REST APIs</span>
+      <span class="about-tag">DOM Manipulation</span>
+      <span class="about-tag">Real-Time Data</span>
+      <span class="about-tag">Vanilla JS</span>
+      <span class="about-tag">CSS Grid</span>
     </div>
   </section>
 
   <!-- SCROLL 1 — NEWS & CHATBOT -->
   <section class="news-chat-section" id="news-chat" aria-label="News and Chat">
     <div class="section-header reveal">
-      <span class="section-tag"><!--// LIVE FEED--></span>
-      <h2 class="section-title">News & Assistant</h2>
-      <p class="section-desc">Latest tech headlines alongside your AI-powered assistant</p>
+      <span class="section-tag">LIVE FEED</span>
+      <h2 class="section-title">News & PULSE AI</h2>
+      <p class="section-desc">Stay updated with tech headlines — ask PULSE AI anything, anytime</p>
     </div>
     <div class="news-chat-grid">
       <!-- Left: Tech News -->
@@ -98,13 +159,13 @@
       <div class="chatbot-panel reveal delay-2" id="chatbot-panel" aria-label="AI Assistant">
         <div class="panel-header">
           <span class="panel-icon">🤖</span>
-          <h3 class="panel-title">AI ASSISTANT</h3>
+          <h3 class="panel-title">PULSE AI</h3>
           <span class="chatbot-status" id="chatbot-status">● Online</span>
         </div>
         <div class="chatbot-messages" id="chatbot-messages" role="log" aria-live="polite">
           <div class="chat-msg bot">
             <span class="chat-avatar">⚡</span>
-            <p>Hey! I'm PULSE, your AI assistant. Ask me anything about tech, news, weather, or anything on your mind.</p>
+            <p>Hey! I'm PULSE AI 🤖 Ask me anything — tech, news, career, studies, or just chat. I'm here between your lectures!</p>
           </div>
         </div>
         <div class="chatbot-input-row">
@@ -120,54 +181,58 @@
     <div class="section-header reveal">
       <span class="section-tag">EXPLORE</span>
       <h2 class="section-title">Command Centre</h2>
-      <p class="section-desc">Dive into real-time data streams from across the globe and beyond</p>
+      <p class="section-desc">Your launchpad — explore every section of PULSE-SYNC</p>
     </div>
     <div class="portals-grid">
-      <!-- Weather Card -->
-      <a href="/weather.html" class="portal-card weather-card tilt-card reveal delay-1" id="portal-weather">
-        <div class="portal-icon">🌍</div>
-        <h3 class="portal-title">WEATHER</h3>
-        <p class="portal-desc">Live weather tracking from your exact location. Real-time temperature, humidity, wind speed and daily forecast.</p>
-        <div class="portal-tags">
-          <span class="portal-tag">Geolocation</span>
-          <span class="portal-tag">Live Data</span>
-          <span class="portal-tag">Forecast</span>
-        </div>
-        <div class="portal-arrow">
-          <span>Explore</span>
-          <span>→</span>
-        </div>
-      </a>
-      <!-- Finance Card -->
-      <a href="/finance.html" class="portal-card finance-card tilt-card reveal delay-2" id="portal-finance">
-        <div class="portal-icon">📉</div>
+
+      <a href="/finance.html" class="portal-card finance-card tilt-card reveal delay-1" id="portal-finance" aria-label="Finance section">
+        <div class="portal-icon">📈</div>
         <h3 class="portal-title">FINANCIAL HUB</h3>
-        <p class="portal-desc">Real-time currency exchange rates and cryptocurrency market tracking. Watch the money flow.</p>
+        <p class="portal-desc">Live crypto markets, currency converter, FAANG stocks and real-time exchange rates.</p>
         <div class="portal-tags">
-          <span class="portal-tag">USD/INR</span>
           <span class="portal-tag">Crypto</span>
+          <span class="portal-tag">Forex</span>
           <span class="portal-tag">Markets</span>
         </div>
-        <div class="portal-arrow">
-          <span>Explore</span>
-          <span>→</span>
-        </div>
+        <div class="portal-arrow"><span>Explore</span><span>→</span></div>
       </a>
-      <!-- Science Card -->
-      <a href="/science.html" class="portal-card science-card tilt-card reveal delay-3" id="portal-science">
+
+      <a href="/science.html" class="portal-card science-card tilt-card reveal delay-2" id="portal-science" aria-label="Science section">
         <div class="portal-icon">🔭</div>
-        <h3 class="portal-title">SCIENCE &amp; SPACE</h3>
-        <p class="portal-desc">NASA's daily cosmic photo and live ISS tracking. Explore the final frontier.</p>
+        <h3 class="portal-title">SCIENCE & SPACE</h3>
+        <p class="portal-desc">NASA's daily cosmic photo, live ISS tracking, space news and did-you-know discoveries.</p>
         <div class="portal-tags">
           <span class="portal-tag">NASA</span>
           <span class="portal-tag">ISS Live</span>
-          <span class="portal-tag">Cosmos</span>
+          <span class="portal-tag">Space News</span>
         </div>
-        <div class="portal-arrow">
-          <span>Explore</span>
-          <span>→</span>
-        </div>
+        <div class="portal-arrow"><span>Explore</span><span>→</span></div>
       </a>
+
+      <a href="/discover.html" class="portal-card discover-card tilt-card reveal delay-3" id="portal-discover" aria-label="Discover section">
+        <div class="portal-icon">🧭</div>
+        <h3 class="portal-title">DISCOVER</h3>
+        <p class="portal-desc">Tech timeline, GitHub trending, Wikipedia daily tech, and CS career paths.</p>
+        <div class="portal-tags">
+          <span class="portal-tag">GitHub</span>
+          <span class="portal-tag">Timeline</span>
+          <span class="portal-tag">Careers</span>
+        </div>
+        <div class="portal-arrow"><span>Explore</span><span>→</span></div>
+      </a>
+
+      <a href="/games.html" class="portal-card games-card tilt-card reveal delay-4" id="portal-games" aria-label="Games section">
+        <div class="portal-icon">🎮</div>
+        <h3 class="portal-title">GAMES</h3>
+        <p class="portal-desc">Take a break between lectures — fun CS-themed games to keep your mind sharp.</p>
+        <div class="portal-tags">
+          <span class="portal-tag">Quiz</span>
+          <span class="portal-tag">Trivia</span>
+          <span class="portal-tag">Fun</span>
+        </div>
+        <div class="portal-arrow"><span>Explore</span><span>→</span></div>
+      </a>
+
     </div>
   </section>
 
@@ -179,11 +244,9 @@
       <p class="section-desc">A little something to brighten your dev day</p>
     </div>
     <div class="joke-full-card reveal delay-1" id="joke-widget">
-      <div class="joke-header">
-        <span class="widget-icon">😂</span>
-        <span class="widget-label">Dev Joke of the Day</span>
-      </div>
-      <div id="joke-content">
+      <div class="joke-decoration">😂</div>
+      <div class="joke-badge">DEV JOKE OF THE DAY</div>
+      <div id="joke-content" class="joke-content-area">
         <div class="loading-skeleton loading-text" style="width:80%"></div>
         <div class="loading-skeleton loading-text" style="width:60%"></div>
       </div>
@@ -191,7 +254,30 @@
     </div>
   </section>
 
+  <!-- CS FACTS SECTION -->
+  <section class="cs-facts-section" id="cs-facts" aria-label="CS Facts and Tricks">
+    <div class="section-header reveal">
+      <span class="section-tag">// DID YOU KNOW</span>
+      <h2 class="section-title">CS Facts & Tricks</h2>
+      <p class="section-desc">3 things every CS student should know — refreshed every visit</p>
+    </div>
+
+    <div class="cs-facts-grid" id="cs-facts-grid">
+      <!-- JS will populate these -->
+      <div class="cs-fact-card reveal delay-1">
+        <div class="loading-skeleton loading-block" style="height:120px"></div>
+      </div>
+      <div class="cs-fact-card reveal delay-2">
+        <div class="loading-skeleton loading-block" style="height:120px"></div>
+      </div>
+      <div class="cs-fact-card reveal delay-3">
+        <div class="loading-skeleton loading-block" style="height:120px"></div>
+      </div>
+    </div>
+  </section>
+
   </main>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>
