@@ -71,11 +71,11 @@ async function loadHomeNews() {
   container.innerHTML = articles
     .slice(0, 5)
     .map((a) => `
-      <a href="${a.url}" target="_blank" rel="noopener" class="news-card">
+      <div class="news-card">
         <div class="news-source">${a.source.name}</div>
         <h4 class="news-title">${a.title}</h4>
         <p class="news-desc">${a.description || ''}</p>
-      </a>
+      </div>
     `)
     .join('');
 }

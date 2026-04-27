@@ -3,72 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Science &amp; Space Hub | PULSE-SYNC</title>
-  <meta name="description" content="NASA's Astronomy Picture of the Day, SpaceX launch countdowns, and live ISS tracking. Your Science &amp; Space hub by PULSE-SYNC." />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔭</text></svg>" />
+  <title>Space | PULSE-SYNC</title>
+  <meta name="description" content="NASA APOD, ISS live tracker, space news and cosmic discoveries." />
   <link rel="stylesheet" href="/style.css" />
-  <!-- Leaflet CSS for ISS Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <style>
-    /* Override Leaflet tiles for dark theme */
-    .leaflet-tile-pane { filter: brightness(0.7) contrast(1.1) saturate(0.8) hue-rotate(180deg) invert(1); }
-    .leaflet-container { background: var(--bg-secondary); }
-  </style>
 </head>
-<body>
-  <div class="aurora">
-    <div class="aurora-layer aurora-1"></div>
-    <div class="aurora-layer aurora-2"></div>
-    <div class="aurora-layer aurora-3"></div>
+<body class="science-page">
+  <div class="science-bg">
+    <div class="science-orb science-orb-1"></div>
+    <div class="science-orb science-orb-2"></div>
+    <div class="science-orb science-orb-3"></div>
+    <canvas id="science-stars" class="science-stars-canvas"></canvas>
   </div>
   <canvas id="cursor-trail" aria-hidden="true"></canvas>
 
-  <!-- Page Hero -->
-  <main id="main-content">
-  <section class="page-hero" id="science-hero">
-    <div class="section-header">
-      <span class="section-tag">SECTION 03</span>
-      <h1 class="section-title" style="font-size: clamp(1.8rem, 5vw, 3rem);">Science &amp; Space Hub</h1>
-      <p class="section-desc">Explore the cosmos — NASA's lens to the universe</p>
+  <section class="page-hero science-hero">
+    <div class="science-hero-content">
+      <div class="science-hero-badge"><span class="science-live-dot"></span><span>LIVE SPACE DATA</span></div>
+      <h1 class="science-hero-title">Space</h1>
+      <p class="science-hero-subtitle">Explore the cosmos — NASA's lens to the universe</p>
+      <div class="science-hero-stats">
+        <div class="science-stat"><span class="science-stat-val">🛰️</span><span class="science-stat-label">ISS Live</span></div>
+        <div class="science-stat-div"></div>
+        <div class="science-stat"><span class="science-stat-val">🌌</span><span class="science-stat-label">NASA APOD</span></div>
+        <div class="science-stat-div"></div>
+        <div class="science-stat"><span class="science-stat-val">📰</span><span class="science-stat-label">Space News</span></div>
+        <div class="science-stat-div"></div>
+        <div class="science-stat"><span class="science-stat-val">🎮</span><span class="science-stat-label">Space Game</span></div>
+      </div>
     </div>
   </section>
 
-  <!-- Page Content -->
-  <div class="page-content">
-    <div class="science-layout-simple">
-      <!-- NASA APOD -->
-      <div class="apod-card reveal" id="apod-card">
-        <div class="apod-image-wrapper" id="apod-image-wrapper">
-          <div class="loading-skeleton" style="width:100%;height:350px"></div>
+  <div class="science-tabs-wrapper">
+    <div class="science-nav-tabs" id="science-tabs" role="tablist">
+      <button class="science-tab active" data-tab="observatory" role="tab"><span>🔭</span> Observatory</button>
+      <button class="science-tab" data-tab="explore" role="tab"><span>📰</span> Explore</button>
+      <button class="science-tab" data-tab="game" role="tab"><span>🎮</span> Play</button>
+    </div>
+  </div>
+
+  <div class="science-tab-content active" id="tab-observatory">
+    <div class="science-content">
+      <div class="apod-full-card reveal" id="apod-card">
+        <div class="apod-full-header">
+          <div class="apod-full-badge"><span>🌌</span><span>ASTRONOMY PICTURE OF THE DAY</span></div>
+          <span class="apod-full-date" id="apod-date-badge">NASA</span>
         </div>
-        <div class="apod-content" id="apod-content">
-          <div class="loading-skeleton loading-text" style="width:50%"></div>
-          <div class="loading-skeleton loading-text" style="width:30%"></div>
-          <div class="loading-skeleton loading-text" style="width:90%"></div>
-          <div class="loading-skeleton loading-text" style="width:80%"></div>
+        <div class="apod-full-body-new">
+          <div class="apod-full-media" id="apod-media">
+            <div class="loading-skeleton" style="width:100%;height:420px;border-radius:0"></div>
+          </div>
+          <div class="apod-full-info" id="apod-content">
+            <div class="loading-skeleton loading-text" style="width:70%;height:1.8rem;margin-bottom:1rem"></div>
+            <div class="loading-skeleton loading-text" style="width:90%"></div>
+            <div class="loading-skeleton loading-text" style="width:85%"></div>
+            <div class="loading-skeleton loading-text" style="width:80%"></div>
+          </div>
         </div>
       </div>
-
-      <!-- ISS Tracker -->
-      <div class="iss-card reveal delay-2" id="iss-card">
-        <div class="iss-label">🛰️ ISS LIVE TRACKER</div>
-        <div class="iss-coords" id="iss-coords" aria-live="polite">
-          <div class="iss-coord">
-            <span class="iss-coord-label">Latitude</span>
-            <span class="iss-coord-value" id="iss-lat">Loading...</span>
+      <div class="iss-full-card reveal delay-1" id="iss-card">
+        <div class="iss-full-header">
+          <div class="iss-full-title-group">
+            <span class="iss-full-icon">🛰️</span>
+            <div>
+              <h3 class="iss-full-title">ISS LIVE TRACKER</h3>
+              <p class="iss-full-sub">International Space Station — real-time position</p>
+            </div>
+            <span class="iss-live-badge"><span class="iss-live-dot-sm"></span>LIVE</span>
           </div>
-          <div class="iss-coord">
-            <span class="iss-coord-label">Longitude</span>
-            <span class="iss-coord-value" id="iss-lon">Loading...</span>
+          <div class="iss-full-coords" id="iss-coords" aria-live="polite">
+            <div class="iss-full-coord"><span class="iss-full-coord-label">Latitude</span><span class="iss-full-coord-val" id="iss-lat">—</span></div>
+            <div class="iss-full-coord-div"></div>
+            <div class="iss-full-coord"><span class="iss-full-coord-label">Longitude</span><span class="iss-full-coord-val" id="iss-lon">—</span></div>
+            <div class="iss-full-coord-div"></div>
+            <div class="iss-full-coord"><span class="iss-full-coord-label">Altitude</span><span class="iss-full-coord-val">~408 km</span></div>
+            <div class="iss-full-coord-div"></div>
+            <div class="iss-full-coord"><span class="iss-full-coord-label">Speed</span><span class="iss-full-coord-val">27,600 km/h</span></div>
           </div>
         </div>
-        <div id="iss-map"></div>
+        <div id="iss-map" class="iss-full-map"></div>
       </div>
     </div>
   </div>
 
-  </main>
-  <!-- Leaflet JS -->
+  <div class="science-tab-content" id="tab-explore">
+    <div class="science-content">
+      <div class="explore-grid">
+        <div class="explore-panel reveal">
+          <div class="explore-panel-header"><span>📡</span><h3>SPACE NEWS</h3></div>
+          <div id="space-news-list">
+            <div class="loading-skeleton loading-block" style="height:90px;margin-bottom:0.75rem"></div>
+            <div class="loading-skeleton loading-block" style="height:90px;margin-bottom:0.75rem"></div>
+            <div class="loading-skeleton loading-block" style="height:90px"></div>
+          </div>
+        </div>
+        <div class="explore-panel reveal delay-1">
+          <div class="explore-panel-header"><span>🤯</span><h3>DID YOU KNOW?</h3></div>
+          <div id="did-you-know-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="science-tab-content" id="tab-game">
+    <div class="science-content">
+      <div class="game-wrapper">
+        <div class="game-header">
+          <div class="game-title-group">
+            <h2 class="game-title">🌌 Asteroid Dodge</h2>
+            <p class="game-subtitle">Pilot your ship through the asteroid field — how long can you survive?</p>
+          </div>
+          <div class="game-stats-bar">
+            <div class="game-stat-item"><span class="game-stat-label">Score</span><span class="game-stat-val" id="game-score">0</span></div>
+            <div class="game-stat-item"><span class="game-stat-label">High Score</span><span class="game-stat-val" id="game-highscore">0</span></div>
+            <div class="game-stat-item"><span class="game-stat-label">Level</span><span class="game-stat-val" id="game-level">1</span></div>
+          </div>
+        </div>
+        <div class="game-container">
+          <canvas id="game-canvas" class="game-canvas"></canvas>
+          <div class="game-overlay" id="game-overlay" style="display:flex">
+            <div class="game-overlay-content">
+              <div class="game-overlay-icon">🚀</div>
+              <h3 class="game-overlay-title">Asteroid Dodge</h3>
+              <p class="game-overlay-desc">Use arrow keys or WASD to move your ship<br/>Dodge the asteroids — survive as long as you can!</p>
+              <button class="game-start-btn" id="game-start-btn">Launch Mission 🚀</button>
+              <p class="game-mobile-tip">📱 On mobile: tap screen to move</p>
+            </div>
+          </div>
+          <div class="game-over-overlay" id="game-over-overlay" style="display:none">
+            <div class="game-overlay-content">
+              <div class="game-overlay-icon">💥</div>
+              <h3 class="game-overlay-title">Ship Destroyed!</h3>
+              <p class="game-final-score">Score: <span id="final-score">0</span></p>
+              <p class="game-final-level">Reached Level: <span id="final-level">1</span></p>
+              <button class="game-start-btn" id="game-restart-btn">Try Again 🚀</button>
+            </div>
+          </div>
+        </div>
+        <div class="game-controls-hint">
+          <span>⬆️ ⬇️ ⬅️ ➡️ Arrow Keys</span><span>or</span><span>W A S D</span><span>to move</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script type="module" src="/src/science.js"></script>
 </body>

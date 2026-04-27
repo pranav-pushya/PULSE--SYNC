@@ -1,183 +1,304 @@
+// ═══════════════════════════════════════
+// FINANCE PAGE — PULSE-SYNC
+// Handles crypto markets, currency converter,
+// FAANG stocks and financial insights
+// ═══════════════════════════════════════
+
 import { createNavbar } from './head-foot/navbar.js';
 import { createFooter } from './head-foot/footer.js';
-import { initScrollReveal } from './api/animations.js';
+import { initScrollReveal, initTiltCards } from './api/animations.js';
 import { getCurrencyRates, getCryptoPrices } from './api/api.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  // ─── Initialize cursor trail on this page ───
-  const { initCursorTrail } = await import('./api/animations.js');
-  initCursorTrail();
+// ─── Hardcoded FAANG stocks (delayed data) ───
+const FAANG_STOCKS = [
+  { name: 'Apple', ticker: 'AAPL', price: 189.30, change: 1.24, icon: '🍎' },
+  { name: 'Microsoft', ticker: 'MSFT', price: 378.85, change: 0.87, icon: '🪟' },
+  { name: 'Google', ticker: 'GOOGL', price: 164.32, change: -0.43, icon: '🔍' },
+  { name: 'Amazon', ticker: 'AMZN', price: 178.25, change: 2.11, icon: '📦' },
+  { name: 'Meta', ticker: 'META', price: 485.58, change: 1.56, icon: '👓' },
+  { name: 'Netflix', ticker: 'NFLX', price: 628.40, change: -1.20, icon: '🎬' },
+  { name: 'NVIDIA', ticker: 'NVDA', price: 875.35, change: 3.45, icon: '⚡' },
+  { name: 'Tesla', ticker: 'TSLA', price: 177.90, change: -2.30, icon: '🚗' },
+];
 
+// ─── Page Initialization ───
+document.addEventListener('DOMContentLoaded', async () => {
   createNavbar('finance');
   createFooter();
   initScrollReveal();
-  loadCurrency();
-  loadCrypto();
+  initTiltCards();
+  initTabs();
+  await loadMarkets();
+  await loadCurrencyRates();
+  initConverter();
+  renderStocks();
 });
 
 // ═══════════════════════════════════════
-// CURRENCY EXCHANGE RATES
-// Fetches live USD rates from open.er-api.com
-// Shows INR, EUR, GBP, JPY pairs
+// TAB NAVIGATION
+// Switches between Markets, Converter, Insights
 // ═══════════════════════════════════════
-async function loadCurrency() {
-  const container = document.getElementById('currency-content');
-  const data = await getCurrencyRates();
+function initTabs() {
+  const tabs = document.querySelectorAll('.finance-tab');
+  const contents = document.querySelectorAll('.finance-tab-content');
 
-  if (!data) {
-    container.innerHTML = '<p style="color:var(--text-muted)">Unable to load currency data</p>';
-    return;
-  }
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
 
-  container.innerHTML = `
-    <div class="currency-rate">
-      <span class="currency-value">${data.INR.toFixed(2)}</span>
-      <span class="currency-label">INR / 1 USD</span>
-    </div>
-    <div class="currency-pair">
-      <span class="currency-pair-name">🇺🇸 USD → 🇮🇳 INR</span>
-      <span class="currency-pair-value">₹${data.INR.toFixed(2)}</span>
-    </div>
-    <div class="currency-pair">
-      <span class="currency-pair-name">🇺🇸 USD → 🇪🇺 EUR</span>
-      <span class="currency-pair-value">€${data.EUR.toFixed(4)}</span>
-    </div>
-    <div class="currency-pair">
-      <span class="currency-pair-name">🇺🇸 USD → 🇬🇧 GBP</span>
-      <span class="currency-pair-value">£${data.GBP.toFixed(4)}</span>
-    </div>
-    <div class="currency-pair">
-      <span class="currency-pair-name">🇺🇸 USD → 🇯🇵 JPY</span>
-      <span class="currency-pair-value">¥${data.JPY.toFixed(2)}</span>
-    </div>
-    <p class="currency-update">Last updated: ${data.lastUpdate || 'N/A'}</p>
-  `;
+      // Update tab buttons
+      tabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+
+      // Update content panels
+      contents.forEach(c => c.classList.remove('active'));
+      document.getElementById(`tab-${target}`).classList.add('active');
+    });
+  });
 }
 
 // ═══════════════════════════════════════
-// CRYPTOCURRENCY PRICES
-// Fetches top 6 coins from CoinGecko API
-// Includes 7-day sparkline charts
-// Calculates market mood from avg 24h change
+// MARKETS TAB
+// Fetches crypto prices and renders cards
 // ═══════════════════════════════════════
-async function loadCrypto() {
+async function loadMarkets() {
   const grid = document.getElementById('crypto-grid');
-  const coins = await getCryptoPrices();
+  if (!grid) return;
 
-  if (!coins || coins.length === 0) {
-    grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1">Unable to load crypto data</p>';
-    updateMood(null);
-    return;
-  }
+  try {
+    const coins = await getCryptoPrices();
+    if (!coins || coins.length === 0) throw new Error('No data');
 
-  grid.innerHTML = coins
-    .map((coin) => {
-      const change = coin.price_change_percentage_24h;
-      const changeClass = change >= 0 ? 'positive' : 'negative';
-      const changeSign = change >= 0 ? '+' : '';
-      const sparkline = coin.sparkline_in_7d?.price || [];
+    // ─── Calculate market mood from avg 24h change ───
+    const avgChange = coins.reduce((sum, c) =>
+      sum + (c.price_change_percentage_24h || 0), 0) / coins.length;
+    renderMood(avgChange);
+
+    // ─── Render crypto cards ───
+    grid.innerHTML = coins.map(coin => {
+      const change = coin.price_change_percentage_24h || 0;
+      const isPositive = change >= 0;
+      const sparkline = renderSparkline(coin.sparkline_in_7d?.price || []);
 
       return `
-      <div class="crypto-coin">
-        <div class="crypto-coin-header">
-          <img class="crypto-coin-img" src="${coin.image}" alt="${coin.name}" loading="lazy" />
-          <div>
-            <div class="crypto-coin-name">${coin.name}</div>
-            <div class="crypto-coin-symbol">${coin.symbol}</div>
+        <div class="crypto-card">
+          <div class="crypto-card-header">
+            <img src="${coin.image}" alt="${coin.name}" class="crypto-img" loading="lazy" />
+            <div class="crypto-name-group">
+              <span class="crypto-name">${coin.name}</span>
+              <span class="crypto-symbol">${coin.symbol.toUpperCase()}</span>
+            </div>
+            <span class="crypto-change ${isPositive ? 'positive' : 'negative'}">
+              ${isPositive ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}%
+            </span>
+          </div>
+          <div class="crypto-price">${formatPrice(coin.current_price)}</div>
+          <div class="crypto-sparkline">${sparkline}</div>
+          <div class="crypto-meta">
+            <span>MCap: $${formatLarge(coin.market_cap)}</span>
+            <span>Rank #${coin.market_cap_rank}</span>
           </div>
         </div>
-        <div class="crypto-price">$${formatPrice(coin.current_price)}</div>
-        <div class="crypto-change ${changeClass}">
-          ${changeSign}${change?.toFixed(2) || '0.00'}%
-        </div>
-        ${sparkline.length > 0 ? renderSparkline(sparkline, change >= 0) : ''}
-      </div>
-    `;
-    })
-    .join('');
+      `;
+    }).join('');
 
-  updateMood(coins);
+  } catch (err) {
+    console.warn('Crypto error:', err.message);
+    grid.innerHTML = `
+      <div class="error-state" style="grid-column:1/-1">
+        <span>⚠️</span>
+        <p>Could not load crypto data</p>
+        <button onclick="location.reload()">Retry</button>
+      </div>`;
+  }
 }
 
-// ─── Helper: Format crypto price based on value range ───
+// ─── Helper: Render market mood indicator ───
+function renderMood(avgChange) {
+  const icon = document.getElementById('mood-icon');
+  const value = document.getElementById('mood-value');
+  const desc = document.getElementById('mood-desc');
+
+  if (!icon || !value || !desc) return;
+
+  if (avgChange > 2) {
+    icon.textContent = '🚀';
+    value.textContent = 'BULLISH';
+    value.style.color = '#00ff87';
+    desc.textContent = `Markets pumping — avg ${avgChange.toFixed(2)}% gain today`;
+  } else if (avgChange > 0) {
+    icon.textContent = '📈';
+    value.textContent = 'SLIGHTLY BULLISH';
+    value.style.color = '#00d4aa';
+    desc.textContent = `Cautious optimism — avg ${avgChange.toFixed(2)}% gain today`;
+  } else if (avgChange > -2) {
+    icon.textContent = '😐';
+    value.textContent = 'NEUTRAL';
+    value.style.color = '#fbbf24';
+    desc.textContent = `Markets trading sideways — avg ${avgChange.toFixed(2)}% change`;
+  } else {
+    icon.textContent = '🐻';
+    value.textContent = 'BEARISH';
+    value.style.color = '#ef4444';
+    desc.textContent = `Markets down — avg ${avgChange.toFixed(2)}% loss today`;
+  }
+}
+
+// ─── Helper: Format crypto price ───
 function formatPrice(price) {
-  if (price >= 1000) return price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  if (price >= 1) return price.toFixed(2);
-  return price.toFixed(4);
+  if (price >= 1000) return '$' + price.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  if (price >= 1) return '$' + price.toFixed(2);
+  return '$' + price.toFixed(6);
 }
 
-// ─── Helper: Generate inline SVG sparkline chart ───
-function renderSparkline(data, isPositive) {
-  // Downsample to ~30 points
-  const step = Math.max(1, Math.floor(data.length / 30));
-  const points = data.filter((_, i) => i % step === 0);
-  
-  const min = Math.min(...points);
-  const max = Math.max(...points);
+// ─── Helper: Format large numbers ───
+function formatLarge(num) {
+  if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
+  if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+  if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+  return num.toLocaleString();
+}
+
+// ─── Helper: Render SVG sparkline chart ───
+function renderSparkline(prices) {
+  if (!prices || prices.length === 0) return '<div style="height:40px"></div>';
+
+  const w = 200, h = 40;
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
   const range = max - min || 1;
-  const width = 160;
-  const height = 40;
 
-  const pathPoints = points
-    .map((v, i) => {
-      const x = (i / (points.length - 1)) * width;
-      const y = height - ((v - min) / range) * height;
-      return `${i === 0 ? 'M' : 'L'}${x},${y}`;
-    })
-    .join(' ');
+  const points = prices.map((p, i) => {
+    const x = (i / (prices.length - 1)) * w;
+    const y = h - ((p - min) / range) * h;
+    return `${x},${y}`;
+  }).join(' ');
 
-  const color = isPositive ? '#10b981' : '#ef4444';
+  const isUp = prices[prices.length - 1] >= prices[0];
+  const color = isUp ? '#00ff87' : '#ef4444';
 
   return `
-    <div class="crypto-sparkline">
-      <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
-        <path d="${pathPoints}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
+    <svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <polyline points="${points}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" />
+    </svg>
   `;
 }
 
-// ─── Helper: Calculate and display market sentiment ───
-function updateMood(coins) {
-  const emoji = document.getElementById('mood-emoji');
-  const indicator = document.getElementById('mood-indicator');
-  const desc = document.getElementById('mood-description');
+// ─── Render FAANG stocks ───
+function renderStocks() {
+  const grid = document.getElementById('stocks-grid');
+  if (!grid) return;
 
-  if (!coins) {
-    emoji.textContent = '❓';
-    indicator.textContent = 'Data Unavailable';
-    indicator.style.color = 'var(--text-muted)';
-    desc.textContent = 'Unable to calculate market sentiment';
+  grid.innerHTML = FAANG_STOCKS.map(stock => {
+    const isPositive = stock.change >= 0;
+    return `
+      <div class="stock-card">
+        <div class="stock-icon">${stock.icon}</div>
+        <div class="stock-info">
+          <span class="stock-name">${stock.name}</span>
+          <span class="stock-ticker">${stock.ticker}</span>
+        </div>
+        <div class="stock-price-group">
+          <span class="stock-price">$${stock.price.toFixed(2)}</span>
+          <span class="stock-change ${isPositive ? 'positive' : 'negative'}">
+            ${isPositive ? '+' : ''}${stock.change.toFixed(2)}%
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+// CURRENCY CONVERTER TAB
+// Fetches live rates and converts on demand
+// ═══════════════════════════════════════
+let ratesData = null;
+
+async function loadCurrencyRates() {
+  try {
+    const data = await getCurrencyRates();
+    if (!data) throw new Error('No rates');
+    ratesData = data;
+    renderQuickRates(data);
+  } catch (err) {
+    console.warn('Currency error:', err.message);
+    document.getElementById('quick-rates-grid').innerHTML =
+      '<p style="color:var(--text-muted);font-size:0.8rem">Could not load rates</p>';
+  }
+}
+
+// ─── Render quick INR rates ───
+function renderQuickRates(rates) {
+  const grid = document.getElementById('quick-rates-grid');
+  if (!grid || !rates.rates) return;
+
+  // Show rates relative to INR (how many INR = 1 of each currency)
+  const inrRate = rates.rates['INR'] || 1;
+  const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'SGD', 'AED'];
+
+  grid.innerHTML = currencies.map(cur => {
+    const curRate = rates.rates[cur] || 1;
+    // 1 unit of currency = X INR
+    const inrValue = inrRate / curRate;
+    return `
+      <div class="quick-rate-item">
+        <span class="quick-rate-cur">${cur}</span>
+        <span class="quick-rate-val">₹${inrValue.toFixed(2)}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ─── Currency converter logic ───
+function initConverter() {
+  const btn = document.getElementById('converter-btn');
+  const swap = document.getElementById('converter-swap');
+  const amountEl = document.getElementById('converter-amount');
+  const fromEl = document.getElementById('converter-from');
+  const toEl = document.getElementById('converter-to');
+
+  if (!btn) return;
+
+  btn.addEventListener('click', convertCurrency);
+  amountEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') convertCurrency(); });
+
+  // ─── Swap currencies ───
+  swap.addEventListener('click', () => {
+    const temp = fromEl.value;
+    fromEl.value = toEl.value;
+    toEl.value = temp;
+    convertCurrency();
+  });
+}
+
+// ─── Perform conversion ───
+function convertCurrency() {
+  const amount = parseFloat(document.getElementById('converter-amount').value);
+  const from = document.getElementById('converter-from').value;
+  const to = document.getElementById('converter-to').value;
+  const resultAmount = document.getElementById('result-amount');
+  const resultRate = document.getElementById('result-rate');
+
+  if (!ratesData || !ratesData.rates) {
+    resultAmount.textContent = 'Loading rates...';
+    return;
+  }
+  if (isNaN(amount) || amount <= 0) {
+    resultAmount.textContent = 'Enter a valid amount';
     return;
   }
 
-  const avgChange =
-    coins.reduce((sum, c) => sum + (c.price_change_percentage_24h || 0), 0) / coins.length;
+  // Convert via USD base
+  const fromRate = ratesData.rates[from] || 1;
+  const toRate = ratesData.rates[to] || 1;
+  const result = (amount / fromRate) * toRate;
+  const rate = toRate / fromRate;
 
-  if (avgChange > 3) {
-    emoji.textContent = '🚀';
-    indicator.textContent = 'EXTREMELY BULLISH';
-    indicator.style.color = 'var(--accent-green)';
-    desc.textContent = `Markets surging with avg ${avgChange.toFixed(1)}% gains across top coins`;
-  } else if (avgChange > 1) {
-    emoji.textContent = '📈';
-    indicator.textContent = 'BULLISH';
-    indicator.style.color = 'var(--accent-green)';
-    desc.textContent = `Positive momentum with avg ${avgChange.toFixed(1)}% gains`;
-  } else if (avgChange > -1) {
-    emoji.textContent = '😐';
-    indicator.textContent = 'NEUTRAL';
-    indicator.style.color = 'var(--accent-orange)';
-    desc.textContent = `Markets trading sideways at avg ${avgChange.toFixed(1)}%`;
-  } else if (avgChange > -3) {
-    emoji.textContent = '📉';
-    indicator.textContent = 'BEARISH';
-    indicator.style.color = 'var(--accent-red)';
-    desc.textContent = `Markets dipping with avg ${avgChange.toFixed(1)}% losses`;
-  } else {
-    emoji.textContent = '💀';
-    indicator.textContent = 'EXTREMELY BEARISH';
-    indicator.style.color = 'var(--accent-red)';
-    desc.textContent = `Heavy losses at avg ${avgChange.toFixed(1)}% — HODL tight`;
-  }
+  resultAmount.textContent = `${amount} ${from} = ${result.toFixed(4)} ${to}`;
+  resultRate.textContent = `1 ${from} = ${rate.toFixed(4)} ${to}`;
 }

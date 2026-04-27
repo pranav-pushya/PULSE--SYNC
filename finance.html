@@ -3,65 +3,238 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Financial Command Center | PULSE-SYNC</title>
-  <meta name="description" content="Live currency exchange rates and cryptocurrency market tracking. Your financial command center powered by PULSE-SYNC." />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📉</text></svg>" />
+  <title>Financial Hub | PULSE-SYNC</title>
+  <meta name="description" content="Live crypto markets, currency converter and real-time exchange rates." />
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
+
+  <!-- Aurora Background -->
   <div class="aurora">
     <div class="aurora-layer aurora-1"></div>
     <div class="aurora-layer aurora-2"></div>
     <div class="aurora-layer aurora-3"></div>
   </div>
-  <canvas id="cursor-trail" aria-hidden="true"></canvas>
 
   <!-- Page Hero -->
-  <main id="main-content">
   <section class="page-hero" id="finance-hero">
     <div class="section-header">
       <span class="section-tag">SECTION 02</span>
-      <h1 class="section-title" style="font-size: clamp(1.8rem, 5vw, 3rem);">Financial Command Center</h1>
-      <p class="section-desc">Real-time currency exchange & crypto market pulse</p>
+      <h1 class="page-hero-title">Financial Hub</h1>
+      <p class="section-desc">Live markets, crypto prices & currency converter — all in one place</p>
     </div>
   </section>
 
-  <!-- Page Content -->
-  <div class="page-content">
-    <!-- Market Mood Banner -->
-    <div class="market-mood reveal" id="market-mood">
-      <div class="mood-emoji" id="mood-emoji">📊</div>
-      <div class="mood-indicator" id="mood-indicator">Analyzing Market...</div>
-      <p class="mood-description" id="mood-description">Calculating market sentiment from 24h price changes</p>
+  <!-- Tab Navigation -->
+  <div class="finance-tabs-wrapper">
+    <div class="finance-tabs" id="finance-tabs" role="tablist">
+      <button class="finance-tab active" data-tab="markets" role="tab" aria-selected="true">
+        <span>📈</span> Markets
+      </button>
+      <button class="finance-tab" data-tab="converter" role="tab" aria-selected="false">
+        <span>💱</span> Currency Converter
+      </button>
+      <button class="finance-tab" data-tab="insights" role="tab" aria-selected="false">
+        <span>💡</span> Insights
+      </button>
     </div>
+  </div>
 
-    <div class="finance-grid">
-      <!-- Currency Panel -->
-      <div class="currency-panel reveal" id="currency-panel">
-        <h3 class="currency-title">💱 Currency Exchange</h3>
-        <div id="currency-content">
-          <div class="loading-skeleton loading-block" style="height:3rem;margin-bottom:1rem"></div>
-          <div class="loading-skeleton loading-text"></div>
-          <div class="loading-skeleton loading-text"></div>
+  <!-- Tab: Markets -->
+  <div class="finance-tab-content active" id="tab-markets">
+    <div class="page-content">
+
+      <!-- Market Mood -->
+      <div class="market-mood-card reveal" id="mood-card">
+        <div class="mood-icon" id="mood-icon">📊</div>
+        <div class="mood-info">
+          <span class="mood-label">Market Mood</span>
+          <span class="mood-value" id="mood-value">Loading...</span>
+          <span class="mood-desc" id="mood-desc">Fetching market data...</span>
         </div>
       </div>
 
       <!-- Crypto Grid -->
-      <div class="crypto-section reveal delay-1" id="crypto-section">
-        <h3 class="currency-title">🪙 Crypto Markets</h3>
-        <div class="crypto-grid" id="crypto-grid">
-          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
-          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
-          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
-          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
-          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
-          <div class="crypto-coin"><div class="loading-skeleton loading-block"></div></div>
+      <div class="section-header reveal" style="margin-top:3rem">
+        <span class="section-tag">CRYPTO</span>
+        <h2 class="section-title" style="font-size:clamp(1.5rem,3vw,2rem)">Live Crypto Markets</h2>
+      </div>
+      <div class="crypto-grid reveal" id="crypto-grid">
+        <div class="loading-skeleton loading-block" style="height:120px"></div>
+        <div class="loading-skeleton loading-block" style="height:120px"></div>
+        <div class="loading-skeleton loading-block" style="height:120px"></div>
+        <div class="loading-skeleton loading-block" style="height:120px"></div>
+        <div class="loading-skeleton loading-block" style="height:120px"></div>
+        <div class="loading-skeleton loading-block" style="height:120px"></div>
+      </div>
+
+      <!-- FAANG Stocks -->
+      <div class="section-header reveal" style="margin-top:3rem">
+        <span class="section-tag">TECH STOCKS</span>
+        <h2 class="section-title" style="font-size:clamp(1.5rem,3vw,2rem)">FAANG & Tech Giants</h2>
+        <p class="section-desc" style="font-size:0.8rem;margin-top:0.25rem">⚠️ Delayed data — indicative only</p>
+      </div>
+      <div class="stocks-grid reveal" id="stocks-grid">
+        <div class="loading-skeleton loading-block" style="height:100px"></div>
+        <div class="loading-skeleton loading-block" style="height:100px"></div>
+        <div class="loading-skeleton loading-block" style="height:100px"></div>
+        <div class="loading-skeleton loading-block" style="height:100px"></div>
+        <div class="loading-skeleton loading-block" style="height:100px"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Tab: Currency Converter -->
+  <div class="finance-tab-content" id="tab-converter">
+    <div class="page-content">
+      <div class="converter-card reveal">
+        <div class="converter-header">
+          <span class="converter-icon">💱</span>
+          <h2 class="converter-title">Currency Converter</h2>
+          <p class="converter-subtitle">Live exchange rates from 170+ currencies</p>
+        </div>
+
+        <div class="converter-form">
+          <div class="converter-input-group">
+            <label class="converter-label">Amount</label>
+            <input
+              type="number"
+              id="converter-amount"
+              class="converter-input"
+              value="1"
+              min="0"
+              step="any"
+              aria-label="Amount to convert"
+            />
+          </div>
+
+          <div class="converter-selects">
+            <div class="converter-input-group">
+              <label class="converter-label">From</label>
+              <select id="converter-from" class="converter-select" aria-label="From currency">
+                <option value="USD" selected>🇺🇸 USD — US Dollar</option>
+                <option value="EUR">🇪🇺 EUR — Euro</option>
+                <option value="GBP">🇬🇧 GBP — British Pound</option>
+                <option value="INR">🇮🇳 INR — Indian Rupee</option>
+                <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+                <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+                <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+                <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
+                <option value="CNY">🇨🇳 CNY — Chinese Yuan</option>
+                <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+                <option value="AED">🇦🇪 AED — UAE Dirham</option>
+                <option value="BTC">₿ BTC — Bitcoin</option>
+              </select>
+            </div>
+
+            <button class="converter-swap" id="converter-swap" aria-label="Swap currencies">⇄</button>
+
+            <div class="converter-input-group">
+              <label class="converter-label">To</label>
+              <select id="converter-to" class="converter-select" aria-label="To currency">
+                <option value="INR" selected>🇮🇳 INR — Indian Rupee</option>
+                <option value="USD">🇺🇸 USD — US Dollar</option>
+                <option value="EUR">🇪🇺 EUR — Euro</option>
+                <option value="GBP">🇬🇧 GBP — British Pound</option>
+                <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+                <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+                <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+                <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
+                <option value="CNY">🇨🇳 CNY — Chinese Yuan</option>
+                <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+                <option value="AED">🇦🇪 AED — UAE Dirham</option>
+                <option value="BTC">₿ BTC — Bitcoin</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="converter-btn" id="converter-btn">Convert →</button>
+
+          <div class="converter-result" id="converter-result">
+            <div class="result-amount" id="result-amount">—</div>
+            <div class="result-rate" id="result-rate">Enter amount and click Convert</div>
+          </div>
+
+          <!-- Quick rates -->
+          <div class="quick-rates" id="quick-rates">
+            <p class="quick-rates-title">1 unit = INR ₹</p>
+            <div class="quick-rates-grid" id="quick-rates-grid">
+              <div class="loading-skeleton loading-text" style="width:100%"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  </main>
+  <!-- Tab: Insights -->
+  <div class="finance-tab-content" id="tab-insights">
+    <div class="page-content">
+      <div class="insights-grid">
+
+        <div class="insight-card reveal delay-1">
+          <div class="insight-icon">📚</div>
+          <h3 class="insight-title">Finance Glossary</h3>
+          <div class="insight-terms" id="glossary-list">
+            <div class="term-item">
+              <span class="term-name">Bull Market</span>
+              <span class="term-def">A market where prices are rising or expected to rise. Investors feel optimistic.</span>
+            </div>
+            <div class="term-item">
+              <span class="term-name">Bear Market</span>
+              <span class="term-def">A market where prices fall 20%+ from recent highs. Pessimism dominates.</span>
+            </div>
+            <div class="term-item">
+              <span class="term-name">Market Cap</span>
+              <span class="term-def">Total value of all shares/coins. Price × Total Supply = Market Cap.</span>
+            </div>
+            <div class="term-item">
+              <span class="term-name">Volatility</span>
+              <span class="term-def">How much an asset's price fluctuates. High volatility = high risk & reward.</span>
+            </div>
+            <div class="term-item">
+              <span class="term-name">Portfolio</span>
+              <span class="term-def">Collection of financial investments — stocks, crypto, bonds, cash etc.</span>
+            </div>
+            <div class="term-item">
+              <span class="term-name">Liquidity</span>
+              <span class="term-def">How quickly an asset can be converted to cash without affecting its price.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-card reveal delay-2">
+          <div class="insight-icon">💡</div>
+          <h3 class="insight-title">Finance Facts for CS Students</h3>
+          <div class="finance-facts-list">
+            <div class="finance-fact">
+              <span class="fact-num">01</span>
+              <p>Bitcoin's source code is open source — any developer can read, fork or contribute to it on GitHub.</p>
+            </div>
+            <div class="finance-fact">
+              <span class="fact-num">02</span>
+              <p>High-frequency trading firms use algorithms that execute thousands of trades per second — pure CS.</p>
+            </div>
+            <div class="finance-fact">
+              <span class="fact-num">03</span>
+              <p>Blockchain is essentially a distributed linked list — a data structure you learn in DSA.</p>
+            </div>
+            <div class="finance-fact">
+              <span class="fact-num">04</span>
+              <p>Google's IPO in 2004 raised $1.67 billion. Their search algorithm is what made it possible.</p>
+            </div>
+            <div class="finance-fact">
+              <span class="fact-num">05</span>
+              <p>The 2010 Flash Crash wiped $1 trillion in market value in minutes — caused by a trading algorithm bug.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="/src/finance.js"></script>
 </body>
 </html>

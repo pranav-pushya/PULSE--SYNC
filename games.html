@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Games | PULSE-SYNC</title>
+  <meta name="description" content="Fun CS-themed games to play between lectures." />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <div class="aurora">
+    <div class="aurora-layer aurora-1"></div>
+    <div class="aurora-layer aurora-2"></div>
+    <div class="aurora-layer aurora-3"></div>
+  </div>
+
+  <canvas id="cursor-trail" aria-hidden="true"></canvas>
+
+  <!-- Hero -->
+  <section class="page-hero games-hero">
+    <div class="section-header">
+      <span class="section-tag">TAKE A BREAK</span>
+      <h1 class="page-hero-title" style="background:linear-gradient(135deg,#ec4899,#f97316,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        Games
+      </h1>
+      <p class="section-desc">Fun mini-games to refresh your brain between lectures</p>
+    </div>
+  </section>
+
+  <!-- Game Selector -->
+  <div class="games-selector-wrapper">
+    <div class="games-selector">
+      <button class="game-select-btn active" data-game="memory">
+        <span>🧠</span>
+        <span>Memory Match</span>
+      </button>
+      <button class="game-select-btn" data-game="typing">
+        <span>⌨️</span>
+        <span>Type Rush</span>
+      </button>
+      <button class="game-select-btn" data-game="quiz">
+        <span>❓</span>
+        <span>CS Quiz</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Game Panels -->
+  <div class="games-content">
+
+    <!-- Memory Match Game -->
+    <div class="game-panel active" id="panel-memory">
+      <div class="game-panel-header">
+        <div>
+          <h2 class="game-panel-title">🧠 Memory Match</h2>
+          <p class="game-panel-desc">Match pairs of CS concepts — test your memory!</p>
+        </div>
+        <div class="game-panel-stats">
+          <div class="game-stat-pill"><span>Moves</span><span id="memory-moves">0</span></div>
+          <div class="game-stat-pill"><span>Matches</span><span id="memory-matches">0/8</span></div>
+          <div class="game-stat-pill"><span>Time</span><span id="memory-time">0s</span></div>
+        </div>
+      </div>
+      <div class="memory-grid" id="memory-grid"></div>
+      <div class="game-action-row">
+        <button class="game-action-btn" id="memory-restart">↺ New Game</button>
+      </div>
+    </div>
+
+    <!-- Typing Speed Game -->
+    <div class="game-panel" id="panel-typing">
+      <div class="game-panel-header">
+        <div>
+          <h2 class="game-panel-title">⌨️ Type Rush</h2>
+          <p class="game-panel-desc">Type the code snippet as fast as you can!</p>
+        </div>
+        <div class="game-panel-stats">
+          <div class="game-stat-pill"><span>WPM</span><span id="typing-wpm">0</span></div>
+          <div class="game-stat-pill"><span>Accuracy</span><span id="typing-acc">100%</span></div>
+          <div class="game-stat-pill"><span>Time</span><span id="typing-time">60s</span></div>
+        </div>
+      </div>
+      <div class="typing-game-area">
+        <div class="typing-text-display" id="typing-display"></div>
+        <textarea class="typing-input" id="typing-input" placeholder="Click here and start typing..." spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+      </div>
+      <div class="game-action-row">
+        <button class="game-action-btn" id="typing-restart">↺ New Snippet</button>
+      </div>
+    </div>
+
+    <!-- CS Quiz Game -->
+    <div class="game-panel" id="panel-quiz">
+      <div class="game-panel-header">
+        <div>
+          <h2 class="game-panel-title">❓ CS Quiz</h2>
+          <p class="game-panel-desc">Test your computer science knowledge!</p>
+        </div>
+        <div class="game-panel-stats">
+          <div class="game-stat-pill"><span>Score</span><span id="quiz-score">0</span></div>
+          <div class="game-stat-pill"><span>Question</span><span id="quiz-progress">1/10</span></div>
+          <div class="game-stat-pill"><span>Streak</span><span id="quiz-streak">🔥 0</span></div>
+        </div>
+      </div>
+      <div class="quiz-area" id="quiz-area">
+        <div class="quiz-question-card" id="quiz-question-card">
+          <div class="quiz-category" id="quiz-category">Loading...</div>
+          <p class="quiz-question" id="quiz-question">Preparing your quiz...</p>
+          <div class="quiz-options" id="quiz-options"></div>
+        </div>
+        <div class="quiz-result" id="quiz-result" style="display:none">
+          <div class="quiz-result-icon" id="quiz-result-icon"></div>
+          <h3 class="quiz-result-title" id="quiz-result-title"></h3>
+          <p class="quiz-result-score" id="quiz-result-score"></p>
+          <p class="quiz-result-msg" id="quiz-result-msg"></p>
+          <button class="game-action-btn" id="quiz-restart-btn">Play Again ↺</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="/src/games.js"></script>
+</body>
+</html>

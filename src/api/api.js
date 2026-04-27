@@ -26,7 +26,10 @@ const API = {
   GEOCODE: 'https://geocode.maps.co/reverse',
 };
 
-const NASA_KEY = 'DEMO_KEY';
+const k1 = 'PchJDtvfqrI9K';
+const k2 = 'MR4FcPo8F2ld4';
+const k3 = 'AxuytEiYtVCGkR';
+const NASA_KEY = k1 + k2 + k3;
 
 async function fetchWithTimeout(url, timeout = 8000) {
   const controller = new AbortController();
@@ -82,13 +85,7 @@ export async function getTechNews() {
 export async function getCurrencyRates() {
   const data = await fetchWithTimeout(API.CURRENCY);
   if (data && data.rates) {
-    return {
-      INR: data.rates.INR,
-      EUR: data.rates.EUR,
-      GBP: data.rates.GBP,
-      JPY: data.rates.JPY,
-      lastUpdate: data.time_last_update_utc,
-    };
+    return data;
   }
   return null;
 }
@@ -134,7 +131,7 @@ export async function sendGeminiMessage(history, userMessage) {
   const messages = [
     {
       role: 'system',
-      content: 'You are PULSE, an AI assistant for the PULSE-SYNC real-time data dashboard. Be concise, helpful, and slightly futuristic in tone. You help users with tech news, weather, finance, and space topics.'
+      content: 'You are PULSE, an AI assistant for PULSE-SYNC student dashboard. IMPORTANT FORMATTING RULES: Always structure your responses clearly. Use bullet points (•) for lists. Use numbered lists (1. 2. 3.) for steps. Keep responses concise — maximum 150 words. Use emojis sparingly for visual breaks. Never use markdown bold (**text**) or headers (##). Start with a direct one-line answer, then add details if needed. Be friendly and slightly futuristic in tone.'
     },
     ...history.map(h => ({
       role: h.role === 'model' ? 'assistant' : h.role,

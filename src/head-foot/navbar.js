@@ -12,7 +12,7 @@ export function createNavbar(activePage = '') {
     <div class="nav-links" id="nav-links">
       <a href="/index.html" class="${activePage === 'home' ? 'active' : ''}" aria-current="${activePage === 'home' ? 'page' : 'false'}">Home</a>
       <a href="/finance.html" class="${activePage === 'finance' ? 'active' : ''}" aria-current="${activePage === 'finance' ? 'page' : 'false'}">Finance</a>
-      <a href="/science.html" class="${activePage === 'science' ? 'active' : ''}" aria-current="${activePage === 'science' ? 'page' : 'false'}">Science</a>
+      <a href="/science.html" class="${activePage === 'science' ? 'active' : ''}" aria-current="${activePage === 'science' ? 'page' : 'false'}">Space</a>
       <a href="/discover.html" class="${activePage === 'discover' ? 'active' : ''}" aria-current="${activePage === 'discover' ? 'page' : 'false'}">Discover</a>
       <a href="/games.html" class="${activePage === 'games' ? 'active' : ''}" aria-current="${activePage === 'games' ? 'page' : 'false'}">Games</a>
       <button class="weather-btn" id="weather-toggle" aria-label="Toggle weather popup">
@@ -188,3 +188,26 @@ export function createNavbar(activePage = '') {
     );
   }
 }
+
+// ─── Save and restore scroll position per page ───
+const pageKey = 'scroll_' + window.location.pathname;
+
+// Restore scroll position
+const savedScroll = sessionStorage.getItem(pageKey);
+if (savedScroll) {
+  setTimeout(() => {
+    window.scrollTo(0, parseInt(savedScroll));
+  }, 100);
+}
+
+// Save scroll position on all link clicks
+document.querySelectorAll('a[href]').forEach(link => {
+  link.addEventListener('click', () => {
+    sessionStorage.setItem(pageKey, window.scrollY);
+  });
+});
+
+// Also save on page hide
+window.addEventListener('pagehide', () => {
+  sessionStorage.setItem(pageKey, window.scrollY);
+});

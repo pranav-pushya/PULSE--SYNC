@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discover | PULSE-SYNC</title>
+  <meta name="description" content="Tech timeline, GitHub trending, Wikipedia daily tech and CS career paths." />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <div class="aurora">
+    <div class="aurora-layer aurora-1"></div>
+    <div class="aurora-layer aurora-2"></div>
+    <div class="aurora-layer aurora-3"></div>
+  </div>
+
+  <canvas id="cursor-trail" aria-hidden="true"></canvas>
+
+  <!-- Hero -->
+  <section class="page-hero discover-hero">
+    <div class="section-header">
+      <span class="section-tag">EXPLORE & LEARN</span>
+      <h1 class="page-hero-title" style="background:linear-gradient(135deg,#fbbf24,#f97316,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        Discover
+      </h1>
+      <p class="section-desc">Tech timeline, GitHub trending, daily knowledge & CS career paths</p>
+    </div>
+  </section>
+
+  <!-- Tab Navigation -->
+  <div class="finance-tabs-wrapper">
+    <div class="finance-tabs discover-tabs" id="discover-tabs" role="tablist">
+      <button class="finance-tab active" data-tab="timeline" role="tab">
+        <span>⏳</span> Tech Timeline
+      </button>
+      <button class="finance-tab" data-tab="github" role="tab">
+        <span>🐙</span> GitHub Trending
+      </button>
+      <button class="finance-tab" data-tab="knowledge" role="tab">
+        <span>🧠</span> Daily Knowledge
+      </button>
+      <button class="finance-tab" data-tab="careers" role="tab">
+        <span>🚀</span> CS Careers
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab: Tech Timeline -->
+  <div class="finance-tab-content active" id="tab-timeline">
+    <div class="page-content">
+      <div class="timeline-wrapper">
+        <div class="timeline-line"></div>
+        <div id="timeline-items"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: GitHub Trending -->
+  <div class="finance-tab-content" id="tab-github">
+    <div class="page-content">
+      <div class="section-header reveal" style="margin-bottom:2rem">
+        <span class="section-tag">GITHUB</span>
+        <h2 class="section-title" style="font-size:clamp(1.5rem,3vw,2rem)">Trending Repositories</h2>
+        <p class="section-desc">What developers around the world are building right now</p>
+      </div>
+      <div class="github-grid" id="github-grid">
+        <div class="loading-skeleton loading-block" style="height:140px"></div>
+        <div class="loading-skeleton loading-block" style="height:140px"></div>
+        <div class="loading-skeleton loading-block" style="height:140px"></div>
+        <div class="loading-skeleton loading-block" style="height:140px"></div>
+        <div class="loading-skeleton loading-block" style="height:140px"></div>
+        <div class="loading-skeleton loading-block" style="height:140px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Daily Knowledge -->
+  <div class="finance-tab-content" id="tab-knowledge">
+    <div class="page-content">
+      <div class="knowledge-grid">
+
+        <!-- Today's Tech -->
+        <div class="knowledge-card reveal">
+          <div class="knowledge-card-header">
+            <span class="knowledge-icon">💡</span>
+            <h3 class="knowledge-title">Today's Tech</h3>
+            <span class="knowledge-date" id="today-date"></span>
+          </div>
+          <div id="daily-tech-content">
+            <div class="loading-skeleton loading-text" style="width:60%;height:1.5rem;margin-bottom:0.75rem"></div>
+            <div class="loading-skeleton loading-text" style="width:95%"></div>
+            <div class="loading-skeleton loading-text" style="width:85%"></div>
+            <div class="loading-skeleton loading-text" style="width:90%"></div>
+          </div>
+        </div>
+
+        <!-- Random CS Concept -->
+        <div class="knowledge-card reveal delay-1">
+          <div class="knowledge-card-header">
+            <span class="knowledge-icon">🎲</span>
+            <h3 class="knowledge-title">Random CS Concept</h3>
+            <button class="knowledge-refresh-btn" id="refresh-concept" aria-label="Get new concept">↻</button>
+          </div>
+          <div id="cs-concept-content"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: CS Careers -->
+  <div class="finance-tab-content" id="tab-careers">
+    <div class="page-content">
+
+      <!-- Top Companies -->
+      <div class="section-header reveal" style="margin-bottom:2rem">
+        <span class="section-tag">COMPANIES</span>
+        <h2 class="section-title" style="font-size:clamp(1.5rem,3vw,2rem)">Top Tech Companies</h2>
+      </div>
+      <div class="companies-grid reveal" id="companies-grid"></div>
+
+      <!-- Interview Questions -->
+      <div class="section-header reveal" style="margin:3rem 0 2rem">
+        <span class="section-tag">INTERVIEW PREP</span>
+        <h2 class="section-title" style="font-size:clamp(1.5rem,3vw,2rem)">Common Interview Questions</h2>
+      </div>
+      <div class="interview-grid" id="interview-grid"></div>
+
+      <!-- Trending Topics -->
+      <div class="section-header reveal" style="margin:3rem 0 2rem">
+        <span class="section-tag">MARKET TRENDS</span>
+        <h2 class="section-title" style="font-size:clamp(1.5rem,3vw,2rem)">Trending in CS</h2>
+      </div>
+      <div class="trends-grid" id="trends-grid"></div>
+
+    </div>
+  </div>
+
+  <script type="module" src="/src/discover.js"></script>
+</body>
+</html>
