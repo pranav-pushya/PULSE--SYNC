@@ -9,6 +9,8 @@ export default defineConfig({
         weather: resolve(__dirname, 'weather.html'),
         finance: resolve(__dirname, 'finance.html'),
         science: resolve(__dirname, 'science.html'),
+        discover: resolve(__dirname, 'discover.html'),
+        games: resolve(__dirname, 'games.html'),
       },
     },
   },
