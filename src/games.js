@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   createFooter();
   initCursorTrail();
   initGameSelector();
-  initMemoryGame();
+  initCodeBreaker();
   initTypingGame();
   initQuizGame();
 });
@@ -36,110 +36,208 @@ function initGameSelector() {
 }
 
 // ═══════════════════════════════════════
-// MEMORY MATCH GAME
+// CODE BREAKER GAME
+// Crack the 4-digit secret code in 6 tries
+// Green = right digit right place
+// Yellow = right digit wrong place
+// Grey = digit not in code
 // ═══════════════════════════════════════
-const MEMORY_CARDS = [
-  { id: 1, icon: '🔁', label: 'Loop' },
-  { id: 2, icon: '📦', label: 'Array' },
-  { id: 3, icon: '🌲', label: 'Tree' },
-  { id: 4, icon: '🔗', label: 'Link' },
-  { id: 5, icon: '⚡', label: 'API' },
-  { id: 6, icon: '🔐', label: 'Hash' },
-  { id: 7, icon: '🧬', label: 'DNS' },
-  { id: 8, icon: '💾', label: 'Stack' },
-];
+function initCodeBreaker() {
+  let secretCode = [];
+  let attempts = 0;
+  let maxAttempts = 6;
+  let wins = 0;
+  let bestAttempt = null;
+  let gameOver = false;
 
-function initMemoryGame() {
-  let flipped = [];
-  let matched = [];
-  let moves = 0;
-  let matchCount = 0;
-  let timer = null;
-  let seconds = 0;
-  let gameStarted = false;
-
-  function startTimer() {
-    if (timer) clearInterval(timer);
-    seconds = 0;
-    timer = setInterval(() => {
-      seconds++;
-      document.getElementById('memory-time').textContent = seconds + 's';
-    }, 1000);
+  // ─── Generate random 4-digit code ───
+  function generateCode() {
+    return Array.from({ length: 4 }, () => Math.floor(Math.random() * 10));
   }
 
-  function stopTimer() { if (timer) clearInterval(timer); }
-
-  function renderBoard() {
-    const grid = document.getElementById('memory-grid');
-    if (!grid) return;
-    const cards = [...MEMORY_CARDS, ...MEMORY_CARDS]
-      .map((c, i) => ({ ...c, uid: i }))
-      .sort(() => Math.random() - 0.5);
-    flipped = []; matched = []; moves = 0; matchCount = 0; seconds = 0; gameStarted = false;
-    stopTimer();
-    document.getElementById('memory-moves').textContent = '0';
-    document.getElementById('memory-matches').textContent = '0/8';
-    document.getElementById('memory-time').textContent = '0s';
-
-    grid.innerHTML = cards.map(card => `
-      <div class="memory-card" data-uid="${card.uid}" data-id="${card.id}">
-        <div class="memory-card-inner">
-          <div class="memory-card-front">?</div>
-          <div class="memory-card-back">
-            <span class="memory-card-icon">${card.icon}</span>
-            <span class="memory-card-label">${card.label}</span>
-          </div>
+  // ─── Initialize board with empty rows ───
+  function initBoard() {
+    const board = document.getElementById('cb-board');
+    if (!board) return;
+    board.innerHTML = Array.from({ length: maxAttempts }, (_, i) => `
+      <div class="cb-row" id="cb-row-${i}">
+        <div class="cb-cells">
+          <div class="cb-cell" id="cb-cell-${i}-0">?</div>
+          <div class="cb-cell" id="cb-cell-${i}-1">?</div>
+          <div class="cb-cell" id="cb-cell-${i}-2">?</div>
+          <div class="cb-cell" id="cb-cell-${i}-3">?</div>
+        </div>
+        <div class="cb-feedback" id="cb-feedback-${i}">
+          <span class="cb-dot grey"></span>
+          <span class="cb-dot grey"></span>
+          <span class="cb-dot grey"></span>
+          <span class="cb-dot grey"></span>
         </div>
       </div>
     `).join('');
-
-    grid.querySelectorAll('.memory-card').forEach(card => {
-      card.addEventListener('click', () => handleCardClick(card));
-    });
   }
 
-  function handleCardClick(card) {
-    const uid = card.dataset.uid;
-    const id = card.dataset.id;
-    if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
-    if (flipped.length >= 2) return;
-    if (!gameStarted) { gameStarted = true; startTimer(); }
+  // ─── Check guess against secret code ───
+  function checkGuess(guess) {
+    const result = Array(4).fill('grey');
+    const codeCopy = [...secretCode];
+    const guessCopy = [...guess];
 
-    card.classList.add('flipped');
-    flipped.push({ uid, id, el: card });
-
-    if (flipped.length === 2) {
-      moves++;
-      document.getElementById('memory-moves').textContent = moves;
-      if (flipped[0].id === flipped[1].id) {
-        matchCount++;
-        document.getElementById('memory-matches').textContent = `${matchCount}/8`;
-        flipped.forEach(c => c.el.classList.add('matched'));
-        flipped = [];
-        if (matchCount === 8) {
-          stopTimer();
-          setTimeout(() => showMemoryWin(moves, seconds), 500);
-        }
-      } else {
-        setTimeout(() => { flipped.forEach(c => c.el.classList.remove('flipped')); flipped = []; }, 900);
+    // First pass — find exact matches (green)
+    for (let i = 0; i < 4; i++) {
+      if (guess[i] === secretCode[i]) {
+        result[i] = 'green';
+        codeCopy[i] = null;
+        guessCopy[i] = null;
       }
+    }
+
+    // Second pass — find wrong position matches (yellow)
+    for (let i = 0; i < 4; i++) {
+      if (guessCopy[i] === null) continue;
+      const idx = codeCopy.indexOf(guessCopy[i]);
+      if (idx !== -1) {
+        result[i] = 'yellow';
+        codeCopy[idx] = null;
+      }
+    }
+
+    return result;
+  }
+
+  // ─── Render a completed row ───
+  function renderRow(rowIdx, guess, result) {
+    guess.forEach((digit, i) => {
+      const cell = document.getElementById(`cb-cell-${rowIdx}-${i}`);
+      if (cell) {
+        cell.textContent = digit;
+        cell.classList.add(result[i]);
+      }
+    });
+
+    const feedback = document.getElementById(`cb-feedback-${rowIdx}`);
+    if (feedback) {
+      feedback.innerHTML = result.map(r =>
+        `<span class="cb-dot ${r}"></span>`
+      ).join('');
     }
   }
 
-  function showMemoryWin(moves, time) {
-    const grid = document.getElementById('memory-grid');
-    grid.innerHTML = `
-      <div class="memory-win">
-        <div class="memory-win-icon">🎉</div>
-        <h3>You Won!</h3>
-        <p>Completed in <strong>${moves}</strong> moves and <strong>${time}s</strong></p>
-        <button class="game-action-btn" onclick="document.getElementById('memory-restart').click()">Play Again</button>
-      </div>
-    `;
+  // ─── Handle guess submission ───
+  function submitGuess() {
+    if (gameOver) return;
+
+    const inputs = ['cb-d1', 'cb-d2', 'cb-d3', 'cb-d4'];
+    const guess = inputs.map(id => {
+      const val = document.getElementById(id)?.value;
+      return val !== '' && val !== null ? parseInt(val) : null;
+    });
+
+    // Validate — all 4 digits must be filled
+    if (guess.some(d => d === null || isNaN(d) || d < 0 || d > 9)) {
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.add('cb-input-error');
+          setTimeout(() => el.classList.remove('cb-input-error'), 500);
+        }
+      });
+      return;
+    }
+
+    const result = checkGuess(guess);
+    renderRow(attempts, guess, result);
+    attempts++;
+
+    document.getElementById('cb-attempts').textContent = maxAttempts - attempts;
+
+    // Clear inputs and focus first
+    inputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('cb-d1')?.focus();
+
+    // Check win
+    if (result.every(r => r === 'green')) {
+      wins++;
+      if (!bestAttempt || attempts < bestAttempt) bestAttempt = attempts;
+      document.getElementById('cb-wins').textContent = wins;
+      document.getElementById('cb-best').textContent = bestAttempt + ' tries';
+      showResult(true);
+      return;
+    }
+
+    // Check loss
+    if (attempts >= maxAttempts) {
+      showResult(false);
+    }
   }
 
-  renderBoard();
-  document.getElementById('memory-restart').addEventListener('click', renderBoard);
+  // ─── Show win/loss result ───
+  function showResult(won) {
+    gameOver = true;
+    document.getElementById('cb-input-area').style.display = 'none';
+    document.getElementById('cb-action-row').style.display = 'none';
+
+    const resultEl = document.getElementById('cb-result');
+    resultEl.style.display = 'flex';
+
+    if (won) {
+      document.getElementById('cb-result-icon').textContent = attempts <= 2 ? '🏆' : attempts <= 4 ? '🎉' : '😅';
+      document.getElementById('cb-result-title').textContent = attempts <= 2 ? 'Genius!' : attempts <= 4 ? 'Cracked It!' : 'Phew!';
+      document.getElementById('cb-result-msg').textContent = `You cracked the code ${secretCode.join('')} in ${attempts} attempt${attempts > 1 ? 's' : ''}!`;
+    } else {
+      document.getElementById('cb-result-icon').textContent = '💀';
+      document.getElementById('cb-result-title').textContent = 'Code Not Cracked!';
+      document.getElementById('cb-result-msg').textContent = `The secret code was ${secretCode.join('')}. Better luck next time!`;
+    }
+  }
+
+  // ─── Start new game ───
+  function newGame() {
+    secretCode = generateCode();
+    attempts = 0;
+    gameOver = false;
+
+    document.getElementById('cb-attempts').textContent = maxAttempts;
+    document.getElementById('cb-result').style.display = 'none';
+    document.getElementById('cb-input-area').style.display = 'flex';
+    document.getElementById('cb-action-row').style.display = 'flex';
+
+    initBoard();
+
+    // Focus first input
+    document.getElementById('cb-d1')?.focus();
+
+    // Auto-advance inputs
+    ['cb-d1', 'cb-d2', 'cb-d3', 'cb-d4'].forEach((id, idx, arr) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => {
+        if (el.value.length >= 1 && idx < arr.length - 1) {
+          document.getElementById(arr[idx + 1])?.focus();
+        }
+      });
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitGuess();
+        if (e.key === 'Backspace' && el.value === '' && idx > 0) {
+          document.getElementById(arr[idx - 1])?.focus();
+        }
+      });
+    });
+  }
+
+  newGame();
+
+  document.getElementById('cb-submit')?.addEventListener('click', submitGuess);
+  document.getElementById('cb-new-game')?.addEventListener('click', newGame);
+  document.getElementById('cb-restart')?.addEventListener('click', () => {
+    newGame();
+    document.getElementById('cb-result').style.display = 'none';
+    document.getElementById('cb-input-area').style.display = 'flex';
+    document.getElementById('cb-action-row').style.display = 'flex';
+  });
 }
 
 // ═══════════════════════════════════════
@@ -151,6 +249,11 @@ const CODE_SNIPPETS = [
   `const bubbleSort = (arr) => {\n  for (let i = 0; i < arr.length; i++) {\n    for (let j = 0; j < arr.length - i - 1; j++) {\n      if (arr[j] > arr[j + 1]) {\n        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];\n      }\n    }\n  }\n  return arr;\n};`,
   `class Stack {\n  constructor() { this.items = []; }\n  push(item) { this.items.push(item); }\n  pop() { return this.items.pop(); }\n  peek() { return this.items[this.items.length - 1]; }\n  isEmpty() { return this.items.length === 0; }\n}`,
   `const debounce = (fn, delay) => {\n  let timeout;\n  return (...args) => {\n    clearTimeout(timeout);\n    timeout = setTimeout(() => fn(...args), delay);\n  };\n};`,
+  `function fibonacci(n) {\n  if (n <= 1) return n;\n  let a = 0, b = 1;\n  for (let i = 2; i <= n; i++) {\n    [a, b] = [b, a + b];\n  }\n  return b;\n}`,
+  `const memoize = (fn) => {\n  const cache = new Map();\n  return (...args) => {\n    const key = JSON.stringify(args);\n    if (cache.has(key)) return cache.get(key);\n    const result = fn(...args);\n    cache.set(key, result);\n    return result;\n  };\n};`,
+  `async function retry(fn, times = 3) {\n  for (let i = 0; i < times; i++) {\n    try {\n      return await fn();\n    } catch (err) {\n      if (i === times - 1) throw err;\n      await new Promise(r => setTimeout(r, 1000 * (i + 1)));\n    }\n  }\n}`,
+  `const flatten = (arr, depth = 1) => {\n  return arr.reduce((flat, item) => {\n    return flat.concat(\n      Array.isArray(item) && depth > 1\n        ? flatten(item, depth - 1)\n        : item\n    );\n  }, []);\n};`,
+  `function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}`,
 ];
 
 function initTypingGame() {
@@ -256,6 +359,16 @@ const QUIZ_QUESTIONS = [
   { q: 'What is the output of 2 ** 10 in Python?', options: ['20', '512', '1024', '100'], answer: 2, category: 'Programming' },
   { q: 'Which data structure is used for BFS traversal?', options: ['Stack', 'Queue', 'Tree', 'Graph'], answer: 1, category: 'Algorithms' },
   { q: 'What does OS stand for?', options: ['Open Source', 'Operating System', 'Output Stream', 'Object Storage'], answer: 1, category: 'Systems' },
+  { q: 'What does OOP stand for?', options: ['Object Oriented Programming', 'Open Output Protocol', 'Ordered Operation Process', 'Object Output Pipeline'], answer: 0, category: 'Programming' },
+  { q: 'Which of these is a version control system?', options: ['Docker', 'Git', 'Linux', 'Apache'], answer: 1, category: 'Dev Tools' },
+  { q: 'What is the default port for HTTP?', options: ['443', '8080', '80', '21'], answer: 2, category: 'Networking' },
+  { q: 'In JavaScript, what does "===" mean?', options: ['Assignment', 'Loose equality', 'Strict equality', 'Not equal'], answer: 2, category: 'JavaScript' },
+  { q: 'Which data structure is used for DFS traversal?', options: ['Queue', 'Heap', 'Stack', 'Array'], answer: 2, category: 'Algorithms' },
+  { q: 'What is the full form of RAM?', options: ['Read Access Memory', 'Random Access Memory', 'Rapid Access Module', 'Read Anywhere Memory'], answer: 1, category: 'Hardware' },
+  { q: 'Which language is primarily used for iOS development?', options: ['Kotlin', 'Swift', 'Dart', 'Ruby'], answer: 1, category: 'Mobile Dev' },
+  { q: 'What does CPU stand for?', options: ['Central Program Unit', 'Computer Processing Unit', 'Central Processing Unit', 'Core Processing Utility'], answer: 2, category: 'Hardware' },
+  { q: 'What is the time complexity of inserting in a Hash Table?', options: ['O(n)', 'O(log n)', 'O(n²)', 'O(1)'], answer: 3, category: 'DSA' },
+  { q: 'Which protocol is used for secure web browsing?', options: ['FTP', 'HTTP', 'HTTPS', 'SMTP'], answer: 2, category: 'Networking' },
 ];
 
 function initQuizGame() {

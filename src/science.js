@@ -20,7 +20,14 @@ const SPACE_FACTS = [
   { icon: '💫', fact: 'A teaspoon of neutron star material would weigh about 10 million tons on Earth.' },
   { icon: '🔭', fact: 'The Hubble Space Telescope completes one orbit around Earth every 95 minutes at 27,300 km/h.' },
   { icon: '🌍', fact: 'Earth is the densest planet in the solar system — if Saturn could fit in a bathtub of water, it would float.' },
-  { icon: '🛰️', fact: 'The ISS travels so fast that astronauts see 16 sunrises and sunsets every single day.' },
+  { icon: '🛠️', fact: 'The ISS travels so fast that astronauts see 16 sunrises and sunsets every single day.' },
+  { icon: '🌊', fact: 'There are more possible iterations of a game of chess than atoms in the observable universe — and yet space is incomprehensibly larger than both.' },
+  { icon: '🔥', fact: 'The Sun loses about 4 million tons of mass every second through nuclear fusion — converting it to energy via E=mc².' },
+  { icon: '🌙', fact: 'Astronauts on the ISS see 16 sunrises and 16 sunsets every single day as they orbit Earth every 90 minutes.' },
+  { icon: '⚫', fact: 'If the Earth were compressed to the size of a marble, it would become a black hole. The compression needed is called the Schwarzschild radius.' },
+  { icon: '🚀', fact: 'Voyager 1, launched in 1977, is now over 23 billion km from Earth — the farthest human-made object ever. It still sends data back.' },
+  { icon: '💎', fact: 'Scientists discovered an exoplanet made largely of crystalline carbon — essentially a diamond the size of Earth. It orbits a pulsar 900 light-years away.' },
+  { icon: '🌡️', fact: 'The temperature in space is -270.45°C — just 2.7 degrees above absolute zero. But in direct sunlight near Earth, it can reach 120°C.' },
 ];
 
 const SPACE_NEWS_FALLBACK = [
@@ -30,6 +37,8 @@ const SPACE_NEWS_FALLBACK = [
   { title: 'Chandrayaan-3 Successfully Lands Near Moon South Pole', url: 'https://www.isro.gov.in', summary: 'ISRO makes history as India becomes the first nation to land near the lunar south pole.', site: 'ISRO' },
   { title: 'Astronomers Discover Earth-Sized Planet in Habitable Zone', url: 'https://exoplanets.nasa.gov', summary: 'Using TESS telescope, a new Earth-sized exoplanet found orbiting within its star\'s habitable zone.', site: 'NASA Exoplanets' },
   { title: 'Black Hole Photographed for Second Time in History', url: 'https://www.nasa.gov', summary: 'Event Horizon Telescope captures new image revealing magnetic field structure around a supermassive black hole.', site: 'EHT' },
+  { title: 'Astronomers Detect Mysterious Radio Signals from Deep Space', url: 'https://www.nasa.gov', summary: 'Fast Radio Bursts detected billions of light years away — scientists puzzled by their repeating pattern.', site: 'NASA' },
+  { title: 'NASA Artemis Mission Prepares to Return Humans to Moon', url: 'https://www.nasa.gov/artemis', summary: 'NASA\'s Artemis program aims to land the first woman and first person of color on the lunar surface.', site: 'NASA Artemis' },
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -114,29 +123,54 @@ async function loadAPOD() {
   const contentEl = document.getElementById('apod-content');
   const dateEl = document.getElementById('apod-date-badge');
   if (!mediaEl || !contentEl) return;
+
   try {
     const data = await getNasaAPOD();
     if (!data) throw new Error('No data');
+    if (data.code === 429 || data.error) throw new Error('Rate limited');
+
     if (dateEl) dateEl.textContent = data.date;
+
     if (data.media_type === 'video') {
-      mediaEl.innerHTML = `<iframe src="${data.url}" class="apod-full-video" allowfullscreen title="${data.title}" loading="lazy"></iframe>`;
+      mediaEl.innerHTML = `
+        <iframe
+          src="${data.url}"
+          class="apod-full-video"
+          allowfullscreen
+          title="${data.title}"
+          loading="lazy"
+          style="opacity:1"
+        ></iframe>`;
     } else {
-      mediaEl.innerHTML = `<img src="${data.url}" alt="${data.title}" class="apod-full-image" loading="lazy" />`;
+      mediaEl.innerHTML = `
+        <img
+          src="${data.hdurl || data.url}"
+          alt="${data.title}"
+          class="apod-full-image"
+          loading="lazy"
+          style="opacity:1"
+          onerror="this.src='${data.url}'"
+        />`;
     }
+
     contentEl.innerHTML = `
       <h2 class="apod-full-title">${data.title}</h2>
-      ${data.copyright ? `<span class="apod-full-credit">📸 © ${data.copyright}</span>` : ''}
+      ${data.copyright ? `<span class="apod-full-credit">📸 © ${data.copyright.trim()}</span>` : '<span class="apod-full-credit">📸 NASA / Public Domain</span>'}
       <p class="apod-full-explanation">${data.explanation}</p>
     `;
+
   } catch (err) {
     console.warn('APOD error:', err.message);
-    contentEl.innerHTML = `
-      <div class="error-state">
-        <span>🌌</span>
-        <p>NASA rate limit reached</p>
-        <p style="font-size:0.75rem;color:rgba(255,255,255,0.3)">Try again in a few minutes</p>
-        <button onclick="location.reload()">Retry</button>
+    mediaEl.innerHTML = `
+      <div style="width:100%;height:300px;display:flex;align-items:center;justify-content:center;background:rgba(124,58,237,0.05)">
+        <span style="font-size:5rem">🌌</span>
       </div>`;
+    contentEl.innerHTML = `
+      <h2 class="apod-full-title">Astronomy Picture of the Day</h2>
+      <span class="apod-full-credit" style="color:#ef4444">⚠️ NASA API rate limit reached — try again in a few minutes</span>
+      <p class="apod-full-explanation">The NASA Astronomy Picture of the Day features a different image or photograph of our universe each day, along with a brief explanation written by a professional astronomer.</p>
+      <button onclick="loadAPOD()" style="margin-top:1rem;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:#a78bfa;padding:0.5rem 1.25rem;border-radius:8px;cursor:pointer;font-family:inherit">↺ Retry</button>
+    `;
   }
 }
 

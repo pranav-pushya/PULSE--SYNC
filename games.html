@@ -32,8 +32,8 @@
   <div class="games-selector-wrapper">
     <div class="games-selector">
       <button class="game-select-btn active" data-game="memory">
-        <span>🧠</span>
-        <span>Memory Match</span>
+        <span>🔐</span>
+        <span>Code Breaker</span>
       </button>
       <button class="game-select-btn" data-game="typing">
         <span>⌨️</span>
@@ -49,22 +49,60 @@
   <!-- Game Panels -->
   <div class="games-content">
 
-    <!-- Memory Match Game -->
+    <!-- Code Breaker Game -->
     <div class="game-panel active" id="panel-memory">
       <div class="game-panel-header">
         <div>
-          <h2 class="game-panel-title">🧠 Memory Match</h2>
-          <p class="game-panel-desc">Match pairs of CS concepts — test your memory!</p>
+          <h2 class="game-panel-title">🔐 Code Breaker</h2>
+          <p class="game-panel-desc">Crack the secret 4-digit code in 6 attempts — like Wordle but for hackers!</p>
         </div>
         <div class="game-panel-stats">
-          <div class="game-stat-pill"><span>Moves</span><span id="memory-moves">0</span></div>
-          <div class="game-stat-pill"><span>Matches</span><span id="memory-matches">0/8</span></div>
-          <div class="game-stat-pill"><span>Time</span><span id="memory-time">0s</span></div>
+          <div class="game-stat-pill">
+            <span>Attempts</span>
+            <span id="cb-attempts">6</span>
+          </div>
+          <div class="game-stat-pill">
+            <span>Wins</span>
+            <span id="cb-wins">0</span>
+          </div>
+          <div class="game-stat-pill">
+            <span>Best</span>
+            <span id="cb-best">—</span>
+          </div>
         </div>
       </div>
-      <div class="memory-grid" id="memory-grid"></div>
-      <div class="game-action-row">
-        <button class="game-action-btn" id="memory-restart">↺ New Game</button>
+
+      <div class="codebreaker-area">
+
+        <div class="cb-how-to">
+          <span class="cb-hint-item"><span class="cb-dot green"></span> Right digit, right position</span>
+          <span class="cb-hint-item"><span class="cb-dot yellow"></span> Right digit, wrong position</span>
+          <span class="cb-hint-item"><span class="cb-dot grey"></span> Digit not in code</span>
+        </div>
+
+        <div class="cb-board" id="cb-board"></div>
+
+        <div class="cb-input-area" id="cb-input-area">
+          <div class="cb-input-row">
+            <input type="number" class="cb-digit-input" id="cb-d1" min="0" max="9" maxlength="1" placeholder="?" />
+            <input type="number" class="cb-digit-input" id="cb-d2" min="0" max="9" maxlength="1" placeholder="?" />
+            <input type="number" class="cb-digit-input" id="cb-d3" min="0" max="9" maxlength="1" placeholder="?" />
+            <input type="number" class="cb-digit-input" id="cb-d4" min="0" max="9" maxlength="1" placeholder="?" />
+          </div>
+          <button class="cb-submit-btn" id="cb-submit">Submit Guess →</button>
+        </div>
+
+        <div class="cb-result" id="cb-result" style="display:none">
+          <div class="cb-result-icon" id="cb-result-icon"></div>
+          <h3 class="cb-result-title" id="cb-result-title"></h3>
+          <p class="cb-result-msg" id="cb-result-msg"></p>
+          <button class="game-action-btn" id="cb-restart">New Code 🔐</button>
+        </div>
+
+      </div>
+
+      <div class="game-action-row" id="cb-action-row">
+        <button class="game-action-btn" id="cb-new-game">↺ New Game</button>
       </div>
     </div>
 
