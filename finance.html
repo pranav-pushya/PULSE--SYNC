@@ -6,15 +6,11 @@
   <title>Financial Hub | PULSE-SYNC</title>
   <meta name="description" content="Live crypto markets, currency converter and real-time exchange rates." />
   <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 </head>
-<body>
+<body class="finance-page">
 
-  <!-- Aurora Background -->
-  <div class="aurora">
-    <div class="aurora-layer aurora-1"></div>
-    <div class="aurora-layer aurora-2"></div>
-    <div class="aurora-layer aurora-3"></div>
-  </div>
+  <canvas id="finance-bg-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
 
   <!-- Page Hero -->
   <section class="page-hero" id="finance-hero">
@@ -29,13 +25,13 @@
   <div class="finance-tabs-wrapper">
     <div class="finance-tabs" id="finance-tabs" role="tablist">
       <button class="finance-tab active" data-tab="markets" role="tab" aria-selected="true">
-        <span>📈</span> Markets
+        <span><i class="ph ph-trend-up"></i></span> Markets
       </button>
       <button class="finance-tab" data-tab="converter" role="tab" aria-selected="false">
-        <span>💱</span> Currency Converter
+        <span><i class="ph ph-arrows-left-right"></i></span> Currency
       </button>
       <button class="finance-tab" data-tab="insights" role="tab" aria-selected="false">
-        <span>💡</span> Insights
+        <span><i class="ph ph-lightbulb"></i></span> Insights
       </button>
     </div>
   </div>
@@ -236,5 +232,136 @@
   </div>
 
   <script type="module" src="/src/finance.js"></script>
+
+<script>
+(function(){
+  const cv = document.getElementById('finance-bg-canvas');
+  const ctx = cv.getContext('2d');
+  let W, H, T = 0, mx, my;
+
+  function resize() {
+    W = cv.width = window.innerWidth;
+    H = cv.height = window.innerHeight;
+    mx = W / 2; my = H / 2;
+  }
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  resize();
+
+  const isDark = () => !document.body.classList.contains('light-mode');
+
+  const SERIES = [
+    { color: [6,182,212],   width: 2.4, speed: 0.009, off: 0,   amp: 0.14, freq: 2.6 },
+    { color: [245,158,11],  width: 2.2, speed: 0.011, off: 2.8, amp: 0.12, freq: 3.3 },
+    { color: [16,185,129],  width: 1.6, speed: 0.007, off: 5.2, amp: 0.07, freq: 1.9 },
+  ];
+
+  function draw() {
+    T++;
+    ctx.clearRect(0, 0, W, H);
+    const dark = isDark();
+
+    // Background
+    if (dark) {
+      ctx.fillStyle = '#030d18';
+      ctx.fillRect(0, 0, W, H);
+      const rg = ctx.createRadialGradient(W*0.5, H*0.4, 0, W*0.5, H*0.4, W*0.7);
+      rg.addColorStop(0, 'rgba(6,42,120,0.22)');
+      rg.addColorStop(1, 'transparent');
+      ctx.fillStyle = rg;
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      ctx.fillStyle = '#f0fdf4';
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    // Dot grid
+    for (let x = 14; x < W; x += 20) {
+      for (let y = 14; y < H; y += 20) {
+        ctx.beginPath();
+        ctx.arc(x, y, 0.85, 0, Math.PI * 2);
+        ctx.fillStyle = dark ? 'rgba(6,182,212,0.16)' : 'rgba(0,130,100,0.1)';
+        ctx.fill();
+      }
+    }
+
+    SERIES.forEach((s, si) => {
+      const [r, g, b] = s.color;
+      const pts = [];
+      for (let i = 0; i <= W; i += 2) {
+        const tx = i / W;
+        const base = H * (0.28 + si * 0.18);
+        const w1 = Math.sin(tx * Math.PI * s.freq    + T * s.speed + s.off    ) * H * s.amp;
+        const w2 = Math.sin(tx * Math.PI * s.freq*1.8 + T * s.speed*0.55 + s.off+1) * H * s.amp * 0.38;
+        const w3 = Math.sin(tx * Math.PI * s.freq*0.4 + T * s.speed*0.28 + s.off+3) * H * s.amp * 0.22;
+        const dx = i - mx;
+        const pull = Math.exp(-(dx * dx) / (W * W * 0.018)) * (my - H * 0.45) * 0.38;
+        pts.push([i, base + w1 + w2 + w3 + pull]);
+      }
+
+      // Fill area
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      ctx.lineTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length - 1; i++) {
+        const cx = (pts[i][0] + pts[i+1][0]) / 2;
+        const cy = (pts[i][1] + pts[i+1][1]) / 2;
+        ctx.quadraticCurveTo(pts[i][0], pts[i][1], cx, cy);
+      }
+      ctx.lineTo(W, H);
+      ctx.closePath();
+      const fg = ctx.createLinearGradient(0, 0, 0, H);
+      fg.addColorStop(0, `rgba(${r},${g},${b},${dark ? 0.13 : 0.06})`);
+      fg.addColorStop(1, 'transparent');
+      ctx.fillStyle = fg;
+      ctx.fill();
+
+      // Glow pass
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length - 1; i++) {
+        const cx = (pts[i][0] + pts[i+1][0]) / 2;
+        const cy = (pts[i][1] + pts[i+1][1]) / 2;
+        ctx.quadraticCurveTo(pts[i][0], pts[i][1], cx, cy);
+      }
+      ctx.strokeStyle = `rgba(${r},${g},${b},0.22)`;
+      ctx.lineWidth = s.width + 5;
+      ctx.shadowColor = `rgba(${r},${g},${b},0.8)`;
+      ctx.shadowBlur = dark ? 18 : 6;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Sharp core line
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length - 1; i++) {
+        const cx = (pts[i][0] + pts[i+1][0]) / 2;
+        const cy = (pts[i][1] + pts[i+1][1]) / 2;
+        ctx.quadraticCurveTo(pts[i][0], pts[i][1], cx, cy);
+      }
+      ctx.strokeStyle = `rgba(${r},${g},${b},${dark ? 0.95 : 0.78})`;
+      ctx.lineWidth = s.width;
+      ctx.stroke();
+
+      // Cursor intersection dot
+      const ni = Math.min(Math.max(Math.round(mx / 2), 0), pts.length - 1);
+      if (pts[ni] && Math.abs(pts[ni][1] - my) < 80) {
+        ctx.beginPath();
+        ctx.arc(pts[ni][0], pts[ni][1], 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${r},${g},${b},1)`;
+        ctx.shadowColor = `rgba(${r},${g},${b},1)`;
+        ctx.shadowBlur = 14;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+</script>
 </body>
 </html>

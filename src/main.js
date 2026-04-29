@@ -1,6 +1,6 @@
 import { createNavbar } from './head-foot/navbar.js';
 import { createFooter } from './head-foot/footer.js';
-import { initScrollReveal, initParticles, typeWriter, initTiltCards, initCursorTrail } from './api/animations.js';
+import { initScrollReveal, initParticles, typeWriter, initTiltCards } from './api/animations.js';
 import { getProgrammingJoke, getTechNews, sendGeminiMessage } from './api/api.js';
 
 // ═══════════════════════════════════════
@@ -10,8 +10,6 @@ import { getProgrammingJoke, getTechNews, sendGeminiMessage } from './api/api.js
 document.addEventListener('DOMContentLoaded', () => {
   createNavbar('home');
   createFooter();
-  // Initialize wormhole cursor effect (hero page only)
-  initCursorTrail();
   initParticles('particle-canvas');
   initScrollReveal();
   initTiltCards();
@@ -224,3 +222,256 @@ function initCardSpotlight() {
     });
   });
 }
+
+// ═══════════════════════════════════════
+// WEATHER MODAL — HOME PAGE ONLY
+// Draggable popup with Open-Meteo API
+// ═══════════════════════════════════════
+
+function getWeatherEmoji(code) {
+  if (code === 0) return '☀️';
+  if (code <= 2) return '⛅';
+  if (code === 3) return '☁️';
+  if (code <= 49) return '🌫️';
+  if (code <= 57) return '🌦️';
+  if (code <= 67) return '🌧️';
+  if (code <= 77) return '❄️';
+  if (code <= 82) return '🌦️';
+  if (code <= 99) return '⛈️';
+  return '🌡️';
+}
+
+function getWeatherDesc(code) {
+  if (code === 0) return 'Clear Sky';
+  if (code === 1) return 'Mostly Clear';
+  if (code === 2) return 'Partly Cloudy';
+  if (code === 3) return 'Overcast';
+  if (code <= 49) return 'Foggy';
+  if (code <= 57) return 'Drizzle';
+  if (code <= 67) return 'Rainy';
+  if (code <= 77) return 'Snowy';
+  if (code <= 82) return 'Rain Showers';
+  if (code <= 99) return 'Thunderstorm';
+  return 'Unknown';
+}
+
+async function fetchWeatherCoords(lat, lon, city, country) {
+  const body = document.getElementById('weather-body');
+  if (!body) return;
+  body.innerHTML = `<p style="color:rgba(255,255,255,0.35);font-size:13px;">Loading weather data...</p>`;
+  try {
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto`
+    );
+    const data = await res.json();
+    const c = data.current;
+    const emoji = getWeatherEmoji(c.weather_code);
+    const desc = getWeatherDesc(c.weather_code);
+    body.innerHTML = `
+      <div style="text-align:center;width:100%;">
+        <div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:2px;">${city}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.38);margin-bottom:14px;">${country}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;">
+          <span style="font-size:48px;line-height:1;">${emoji}</span>
+          <span style="font-size:52px;font-weight:800;line-height:1;background:linear-gradient(135deg,#a78bfa,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${Math.round(c.temperature_2m)}°C</span>
+        </div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:18px;">${desc}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px 6px;">
+            <div style="font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Feels Like</div>
+            <div style="font-size:15px;font-weight:700;color:#a78bfa;">${Math.round(c.apparent_temperature)}°C</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px 6px;">
+            <div style="font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Humidity</div>
+            <div style="font-size:15px;font-weight:700;color:#a78bfa;">${c.relative_humidity_2m}%</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px 6px;">
+            <div style="font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Wind</div>
+            <div style="font-size:15px;font-weight:700;color:#a78bfa;">${Math.round(c.wind_speed_10m)} km/h</div>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch {
+    body.innerHTML = `<p style="color:#f87171;font-size:13px;">⚠️ Failed to load weather. Try searching a city.</p>`;
+  }
+}
+
+async function weatherSearchCity() {
+  const input = document.getElementById('weather-city-input');
+  const city = input ? input.value.trim() : '';
+  if (!city) return;
+  const body = document.getElementById('weather-body');
+  if (body) body.innerHTML = `<p style="color:rgba(255,255,255,0.35);font-size:13px;">Searching "${city}"...</p>`;
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`,
+      { headers: { 'Accept-Language': 'en' } }
+    );
+    const data = await res.json();
+    if (!data.length) {
+      const b = document.getElementById('weather-body');
+      if (b) b.innerHTML = `<p style="color:#f87171;font-size:13px;">City not found. Try a different name.</p>`;
+      return;
+    }
+    const p = data[0];
+    const cityName = p.display_name.split(',')[0].trim();
+    const countryName = p.display_name.split(',').slice(-1)[0].trim();
+    await fetchWeatherCoords(parseFloat(p.lat), parseFloat(p.lon), cityName, countryName);
+  } catch {
+    const b = document.getElementById('weather-body');
+    if (b) b.innerHTML = `<p style="color:#f87171;font-size:13px;">⚠️ Search failed. Check your connection.</p>`;
+  }
+}
+
+function initWeatherModal() {
+  const modal = document.getElementById('weather-modal');
+  if (!modal) return; // Only runs on home page where modal exists
+
+  const closeBtn = document.getElementById('weather-close-btn');
+  const searchBtn = document.getElementById('weather-search-btn');
+  const cityInput = document.getElementById('weather-city-input');
+  const dragHandle = document.getElementById('weather-drag-handle');
+
+  // ── OPEN function (used by both navbar btn and hero btn) ──
+  async function openModal() {
+    modal.style.display = 'block';
+    const body = document.getElementById('weather-body');
+    if (body) body.innerHTML = `<p style="color:rgba(255,255,255,0.35);font-size:13px;">📍 Detecting your location...</p>`;
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            const r = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`,
+              { headers: { 'Accept-Language': 'en' } }
+            );
+            const d = await r.json();
+            const city = d.address.city || d.address.town || d.address.village || d.address.county || 'Your Location';
+            const country = d.address.country || '';
+            await fetchWeatherCoords(pos.coords.latitude, pos.coords.longitude, city, country);
+          } catch {
+            await fetchWeatherCoords(pos.coords.latitude, pos.coords.longitude, 'Your Location', '');
+          }
+        },
+        async () => {
+          // Geolocation denied — fallback to New Delhi
+          await fetchWeatherCoords(28.6139, 77.2090, 'New Delhi', 'India');
+        },
+        { timeout: 6000 }
+      );
+    } else {
+      await fetchWeatherCoords(28.6139, 77.2090, 'New Delhi', 'India');
+    }
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+  }
+
+  // ── Attach open to NAVBAR weather button ──
+  // navbar.js injects it into DOM, so use event delegation
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#weather-open-btn')) {
+      openModal();
+    }
+  });
+
+  // ── Attach open to HERO weather button ──
+  const heroBtn = document.getElementById('weather-hero-btn');
+  if (heroBtn) heroBtn.addEventListener('click', openModal);
+
+  // ── Close button ──
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+  // ── Search ──
+  if (searchBtn) searchBtn.addEventListener('click', weatherSearchCity);
+  if (cityInput) {
+    cityInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') weatherSearchCity();
+    });
+  }
+
+  // ── ESC to close ──
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // ── DRAGGABLE LOGIC ──
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  function startDrag(clientX, clientY) {
+    isDragging = true;
+    dragHandle.style.cursor = 'grabbing';
+
+    // Reset transform, lock position with current rect
+    const rect = modal.getBoundingClientRect();
+    modal.style.transform = 'none';
+    modal.style.left = rect.left + 'px';
+    modal.style.top = rect.top + 'px';
+
+    // Offset = where inside the modal the user clicked
+    offsetX = clientX - rect.left;
+    offsetY = clientY - rect.top;
+  }
+
+  function doDrag(clientX, clientY) {
+    if (!isDragging) return;
+
+    let newX = clientX - offsetX;
+    let newY = clientY - offsetY;
+
+    // Clamp within viewport
+    const modalW = modal.offsetWidth;
+    const modalH = modal.offsetHeight;
+    newX = Math.max(0, Math.min(window.innerWidth - modalW, newX));
+    newY = Math.max(0, Math.min(window.innerHeight - modalH, newY));
+
+    modal.style.left = newX + 'px';
+    modal.style.top = newY + 'px';
+  }
+
+  function stopDrag() {
+    isDragging = false;
+    if (dragHandle) dragHandle.style.cursor = 'grab';
+  }
+
+  // Mouse events
+  if (dragHandle) {
+    dragHandle.addEventListener('mousedown', (e) => {
+      startDrag(e.clientX, e.clientY);
+      e.preventDefault();
+    });
+  }
+
+  document.addEventListener('mousemove', (e) => doDrag(e.clientX, e.clientY));
+  document.addEventListener('mouseup', stopDrag);
+
+  // Touch events
+  if (dragHandle) {
+    dragHandle.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      startDrag(t.clientX, t.clientY);
+      e.preventDefault();
+    }, { passive: false });
+  }
+
+  document.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    doDrag(t.clientX, t.clientY);
+  }, { passive: false });
+
+  document.addEventListener('touchend', stopDrag);
+}
+
+// Run on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  initWeatherModal();
+});
+
+
+
+

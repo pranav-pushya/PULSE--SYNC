@@ -6,7 +6,7 @@
 
 import { createNavbar } from './head-foot/navbar.js';
 import { createFooter } from './head-foot/footer.js';
-import { initScrollReveal, initCursorTrail } from './api/animations.js';
+import { initScrollReveal } from './api/animations.js';
 
 // ─── Tech Timeline Data ───
 const TECH_TIMELINE = [
@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
   createNavbar('discover');
   createFooter();
   initScrollReveal();
-  initCursorTrail();
   initDiscoverTabs();
   renderTimeline();
   loadGitHubTrending();

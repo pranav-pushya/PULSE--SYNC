@@ -5,13 +5,12 @@
 
 import { createNavbar } from './head-foot/navbar.js';
 import { createFooter } from './head-foot/footer.js';
-import { initCursorTrail } from './api/animations.js';
+// No cursor trail on games page
 
 // ─── Page Init ───
 document.addEventListener('DOMContentLoaded', () => {
   createNavbar('games');
   createFooter();
-  initCursorTrail();
   initGameSelector();
   initCodeBreaker();
   initTypingGame();

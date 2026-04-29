@@ -6,16 +6,11 @@
   <title>Games | PULSE-SYNC</title>
   <meta name="description" content="Fun CS-themed games to play between lectures." />
   <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 </head>
-<body>
+<body class="games-page">
 
-  <div class="aurora">
-    <div class="aurora-layer aurora-1"></div>
-    <div class="aurora-layer aurora-2"></div>
-    <div class="aurora-layer aurora-3"></div>
-  </div>
-
-  <canvas id="cursor-trail" aria-hidden="true"></canvas>
+  <canvas id="games-bg-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
 
   <!-- Hero -->
   <section class="page-hero games-hero">
@@ -32,15 +27,15 @@
   <div class="games-selector-wrapper">
     <div class="games-selector">
       <button class="game-select-btn active" data-game="memory">
-        <span>🔐</span>
+        <span><i class="ph ph-lock-key"></i></span>
         <span>Code Breaker</span>
       </button>
       <button class="game-select-btn" data-game="typing">
-        <span>⌨️</span>
+        <span><i class="ph ph-keyboard"></i></span>
         <span>Type Rush</span>
       </button>
       <button class="game-select-btn" data-game="quiz">
-        <span>❓</span>
+        <span><i class="ph ph-question"></i></span>
         <span>CS Quiz</span>
       </button>
     </div>
@@ -160,5 +155,200 @@
   </div>
 
   <script type="module" src="/src/games.js"></script>
+
+<script>
+(function(){
+  const cv = document.getElementById('games-bg-canvas');
+  const ctx = cv.getContext('2d');
+  let W, H, T = 0;
+  let mx = 0, my = 0, tmx = 0, tmy = 0;
+
+  function resize(){
+    W = cv.width = window.innerWidth;
+    H = cv.height = window.innerHeight;
+    mx = W/2; my = H/2;
+    tmx = W/2; tmy = H/2;
+  }
+  window.addEventListener('resize', resize);
+  window.addEventListener('mousemove', e => { tmx = e.clientX; tmy = e.clientY; });
+  resize();
+
+  function hsl(h,s,l){
+    h=h%360; if(h<0)h+=360;
+    s/=100; l/=100;
+    const c=(1-Math.abs(2*l-1))*s;
+    const x=c*(1-Math.abs((h/60)%2-1));
+    const m=l-c/2;
+    let r=0,g=0,b=0;
+    if(h<60){r=c;g=x;}else if(h<120){r=x;g=c;}
+    else if(h<180){g=c;b=x;}else if(h<240){g=x;b=c;}
+    else if(h<300){r=x;b=c;}else{r=c;b=x;}
+    return `rgb(${Math.round((r+m)*255)},${Math.round((g+m)*255)},${Math.round((b+m)*255)})`;
+  }
+
+  function rgb(offset){
+    return hsl((T * 1.2 + offset) % 360, 100, 58);
+  }
+
+  function rgbA(offset, alpha){
+    const c = rgb(offset);
+    return c.replace('rgb','rgba').replace(')',`,${alpha})`);
+  }
+
+  // Dark angled panel polygons
+  const PANELS = [
+    [[0,0],[0.42,0],[0.28,0.5],[0,0.5]],
+    [[0,0.52],[0.26,0.52],[0.12,1],[0,1]],
+    [[0.44,0],[0.72,0],[0.56,0.5],[0.3,0.5]],
+    [[0.74,0],[1,0],[1,0.48],[0.58,0.48]],
+    [[0.14,0.54],[0.38,0.54],[0.22,1],[0,1]],
+    [[0.3,0.52],[0.7,0.52],[0.86,1],[0.14,1]],
+    [[0.6,0.5],[1,0.5],[1,1],[0.88,1]],
+    [[0.76,0.02],[1,0.02],[1,0.46],[0.6,0.46]],
+  ];
+
+  const PANEL_COLORS = [
+    '#141414','#111111','#161616','#131313',
+    '#121212','#151515','#111111','#141414'
+  ];
+
+  // RGB neon edge lines
+  const EDGES = [
+    {p1:[0.0,0.5],   p2:[0.26,0.5],  off:0},
+    {p1:[0.3,0.5],   p2:[0.56,0.5],  off:40},
+    {p1:[0.58,0.48], p2:[1.0,0.48],  off:80},
+    {p1:[0.14,0.54], p2:[0.38,0.54], off:120},
+    {p1:[0.3,0.52],  p2:[0.7,0.52],  off:180},
+    {p1:[0.6,0.5],   p2:[1.0,0.5],   off:220},
+    {p1:[0.42,0.0],  p2:[0.28,0.5],  off:60},
+    {p1:[0.72,0.0],  p2:[0.56,0.5],  off:100},
+    {p1:[0.26,0.52], p2:[0.12,1.0],  off:140},
+    {p1:[0.38,0.54], p2:[0.22,1.0],  off:160},
+    {p1:[0.7,0.52],  p2:[0.86,1.0],  off:200},
+    {p1:[1.0,0.48],  p2:[1.0,1.0],   off:240},
+    {p1:[0.18,0.1],  p2:[0.38,0.28], off:30},
+    {p1:[0.38,0.28], p2:[0.18,0.46], off:30},
+    {p1:[0.52,0.1],  p2:[0.72,0.28], off:90},
+    {p1:[0.72,0.28], p2:[0.52,0.46], off:90},
+    {p1:[0.0,0.0],   p2:[0.42,0.0],  off:15},
+    {p1:[0.44,0.0],  p2:[0.72,0.0],  off:55},
+    {p1:[0.74,0.0],  p2:[1.0,0.0],   off:75},
+    {p1:[0.0,1.0],   p2:[0.22,1.0],  off:170},
+    {p1:[0.22,1.0],  p2:[0.86,1.0],  off:210},
+    {p1:[0.86,1.0],  p2:[1.0,1.0],   off:250},
+  ];
+
+  function drawPanel(pts, color){
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0]*W, pts[0][1]*H);
+    for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0]*W, pts[i][1]*H);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  function draw(){
+    T++;
+
+    // Smooth lerp mouse
+    mx += (tmx - mx) * 0.07;
+    my += (tmy - my) * 0.07;
+    const px = (mx / W - 0.5);
+    const py = (my / H - 0.5);
+
+    ctx.clearRect(0,0,W,H);
+
+    // Pure dark base
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0,0,W,H);
+
+    // Draw panels
+    PANELS.forEach((pts, i) => {
+      // Drop shadow
+      const shadow = pts.map(p => [p[0]+0.003, p[1]+0.003]);
+      drawPanel(shadow, 'rgba(0,0,0,0.6)');
+      // Panel face
+      drawPanel(pts, PANEL_COLORS[i % PANEL_COLORS.length]);
+      // Top-left highlight edge
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0]*W, pts[0][1]*H);
+      ctx.lineTo(pts[1][0]*W, pts[1][1]*H);
+      ctx.strokeStyle = 'rgba(255,255,255,0.045)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Draw RGB neon edges
+    EDGES.forEach((e, i) => {
+      const x1 = e.p1[0]*W, y1 = e.p1[1]*H;
+      const x2 = e.p2[0]*W, y2 = e.p2[1]*H;
+      const col = rgb(e.off + px * 50);
+
+      // Moving glow progress
+      const progress = ((T * 0.007 + i * 0.13) % 1);
+      const segLen = 0.28;
+      const seg1 = Math.max(0, progress - segLen);
+
+      // Dim base line
+      ctx.beginPath();
+      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      ctx.strokeStyle = rgbA(e.off + px*50, 0.2);
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Moving bright segment
+      const sx1 = x1+(x2-x1)*seg1, sy1 = y1+(y2-y1)*seg1;
+      const sx2 = x1+(x2-x1)*progress, sy2 = y1+(y2-y1)*progress;
+      const grad = ctx.createLinearGradient(sx1,sy1,sx2,sy2);
+      grad.addColorStop(0,'transparent');
+      grad.addColorStop(1, col);
+      ctx.beginPath();
+      ctx.moveTo(sx1,sy1); ctx.lineTo(sx2,sy2);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = col;
+      ctx.shadowBlur = 14;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Bright head dot at tip
+      const glowX = x1+(x2-x1)*progress;
+      const glowY = y1+(y2-y1)*progress;
+      ctx.beginPath();
+      ctx.arc(glowX, glowY, 3.5, 0, Math.PI*2);
+      ctx.fillStyle = col;
+      ctx.shadowColor = col;
+      ctx.shadowBlur = 18;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    // Global diagonal sweep flash
+    const sweepX = (T * 2.0) % (W + H);
+    ctx.save();
+    ctx.globalAlpha = 0.035;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(sweepX - H, 0);
+    ctx.lineTo(sweepX - H + 70, 0);
+    ctx.lineTo(sweepX + 70, H);
+    ctx.lineTo(sweepX, H);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Cursor reactive RGB aura
+    const cg = ctx.createRadialGradient(mx,my,0,mx,my,140);
+    cg.addColorStop(0, rgbA(px*200 + py*100, 0.09));
+    cg.addColorStop(1,'transparent');
+    ctx.fillStyle = cg;
+    ctx.fillRect(0,0,W,H);
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+</script>
 </body>
 </html>

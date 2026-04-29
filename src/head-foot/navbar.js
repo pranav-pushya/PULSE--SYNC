@@ -10,14 +10,26 @@ export function createNavbar(activePage = '') {
       <span class="logo-pulse">PULSE</span><span class="logo-sync">-SYNC</span>
     </a>
     <div class="nav-links" id="nav-links">
-      <a href="/index.html" class="${activePage === 'home' ? 'active' : ''}" aria-current="${activePage === 'home' ? 'page' : 'false'}">Home</a>
-      <a href="/finance.html" class="${activePage === 'finance' ? 'active' : ''}" aria-current="${activePage === 'finance' ? 'page' : 'false'}">Finance</a>
-      <a href="/science.html" class="${activePage === 'science' ? 'active' : ''}" aria-current="${activePage === 'science' ? 'page' : 'false'}">Space</a>
-      <a href="/discover.html" class="${activePage === 'discover' ? 'active' : ''}" aria-current="${activePage === 'discover' ? 'page' : 'false'}">Discover</a>
-      <a href="/games.html" class="${activePage === 'games' ? 'active' : ''}" aria-current="${activePage === 'games' ? 'page' : 'false'}">Games</a>
-      <button class="weather-btn" id="weather-toggle" aria-label="Toggle weather popup">
-        🌤️ Weather
-      </button>
+      <a href="/index.html" class="${activePage === 'home' ? 'active' : ''}" aria-current="${activePage === 'home' ? 'page' : 'false'}"><i class="ph ph-house-simple"></i> Home</a>
+      <a href="/finance.html" class="${activePage === 'finance' ? 'active' : ''}" aria-current="${activePage === 'finance' ? 'page' : 'false'}"><i class="ph ph-chart-line-up"></i> Finance</a>
+      <a href="/science.html" class="${activePage === 'science' ? 'active' : ''}" aria-current="${activePage === 'science' ? 'page' : 'false'}"><i class="ph ph-planet"></i> Space</a>
+      <a href="/discover.html" class="${activePage === 'discover' ? 'active' : ''}" aria-current="${activePage === 'discover' ? 'page' : 'false'}"><i class="ph ph-compass"></i> Discover</a>
+      <a href="/games.html" class="${activePage === 'games' ? 'active' : ''}" aria-current="${activePage === 'games' ? 'page' : 'false'}"><i class="ph ph-game-controller"></i> Games</a>
+      ${activePage === 'home' ? `<button class="nav-weather-btn" id="weather-open-btn" style="
+        background:rgba(16,185,129,0.12);
+        border:1px solid rgba(16,185,129,0.3);
+        color:#6ee7b7;
+        padding:6px 16px;
+        border-radius:8px;
+        font-size:13px;
+        font-weight:500;
+        cursor:pointer;
+        font-family:inherit;
+        display:flex;
+        align-items:center;
+        gap:6px;
+        transition:all 0.2s;
+      ">🌤️ Weather</button>` : ''}
       <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">
         <span id="theme-icon">☀️</span>
       </button>
@@ -49,22 +61,22 @@ export function createNavbar(activePage = '') {
     lastScrollY = currentScrollY;
   });
 
-  // ─── Light/Dark Toggle ───
-  const themeToggle = document.getElementById('theme-toggle');
-  const themeIcon = document.getElementById('theme-icon');
-  const savedTheme = localStorage.getItem('theme') || 'dark';
+  // // ─── Light/Dark Toggle ───
+  // const themeToggle = document.getElementById('theme-toggle');
+  // const themeIcon = document.getElementById('theme-icon');
+  // const savedTheme = localStorage.getItem('theme') || 'dark';
 
-  // Apply saved theme on load
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+  // // Apply saved theme on load
+  // document.documentElement.setAttribute('data-theme', savedTheme);
+  // themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
 
-  themeToggle.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-    themeIcon.textContent = next === 'dark' ? '☀️' : '🌙';
-  });
+  // themeToggle.addEventListener('click', () => {
+  //   const current = document.documentElement.getAttribute('data-theme');
+  //   const next = current === 'dark' ? 'light' : 'dark';
+  //   document.documentElement.setAttribute('data-theme', next);
+  //   localStorage.setItem('theme', next);
+  //   themeIcon.textContent = next === 'dark' ? '☀️' : '🌙';
+  // });
 
   // ─── Inject weather popup into every page ───
   const weatherPopupHTML = `
