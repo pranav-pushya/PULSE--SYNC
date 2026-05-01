@@ -200,8 +200,12 @@ async function updateISS() {
     const lon = parseFloat(data.longitude);
     const latEl = document.getElementById('iss-lat');
     const lonEl = document.getElementById('iss-lon');
+    const altEl = document.getElementById('iss-alt');
+    const velEl = document.getElementById('iss-vel');
     if (latEl) latEl.textContent = lat.toFixed(4) + '°';
     if (lonEl) lonEl.textContent = lon.toFixed(4) + '°';
+    if (altEl) altEl.textContent = Math.round(data.altitude) + ' km';
+    if (velEl) velEl.textContent = Math.round(data.velocity) + ' km/h';
     issMarker.setLatLng([lat, lon]);
     issPath.push([lat, lon]);
     if (issPath.length > 30) issPath.shift();

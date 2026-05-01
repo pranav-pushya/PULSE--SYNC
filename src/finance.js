@@ -10,15 +10,13 @@ import { initScrollReveal, initTiltCards } from './api/animations.js';
 import { getCurrencyRates, getCryptoPrices } from './api/api.js';
 
 // ─── Hardcoded FAANG stocks (delayed data) ───
-const FAANG_STOCKS = [
-  { name: 'Apple', ticker: 'AAPL', price: 189.30, change: 1.24, icon: '🍎' },
-  { name: 'Microsoft', ticker: 'MSFT', price: 378.85, change: 0.87, icon: '🪟' },
-  { name: 'Google', ticker: 'GOOGL', price: 164.32, change: -0.43, icon: '🔍' },
-  { name: 'Amazon', ticker: 'AMZN', price: 178.25, change: 2.11, icon: '📦' },
-  { name: 'Meta', ticker: 'META', price: 485.58, change: 1.56, icon: '👓' },
-  { name: 'Netflix', ticker: 'NFLX', price: 628.40, change: -1.20, icon: '🎬' },
-  { name: 'NVIDIA', ticker: 'NVDA', price: 875.35, change: 3.45, icon: '⚡' },
-  { name: 'Tesla', ticker: 'TSLA', price: 177.90, change: -2.30, icon: '🚗' },
+const FAANG_DATA = [
+  { symbol:'AAPL', name:'Apple Inc.', price:189.30, change:+1.24 },
+  { symbol:'GOOGL', name:'Alphabet Inc.', price:175.84, change:-0.87 },
+  { symbol:'META', name:'Meta Platforms', price:512.40, change:+2.31 },
+  { symbol:'AMZN', name:'Amazon.com', price:201.20, change:+0.95 },
+  { symbol:'MSFT', name:'Microsoft Corp.', price:415.50, change:-1.10 },
+  { symbol:'NFLX', name:'Netflix Inc.', price:628.90, change:+3.45 },
 ];
 
 // ─── Page Initialization ───
@@ -82,7 +80,6 @@ async function loadMarkets() {
     grid.innerHTML = coins.map(coin => {
       const change = coin.price_change_percentage_24h || 0;
       const isPositive = change >= 0;
-      const sparkline = renderSparkline(coin.sparkline_in_7d?.price || []);
 
       return `
         <div class="crypto-card">
@@ -97,10 +94,8 @@ async function loadMarkets() {
             </span>
           </div>
           <div class="crypto-price">${formatPrice(coin.current_price)}</div>
-          <div class="crypto-sparkline">${sparkline}</div>
           <div class="crypto-meta">
             <span>MCap: $${formatLarge(coin.market_cap)}</span>
-            <span>Rank #${coin.market_cap_rank}</span>
           </div>
         </div>
       `;
@@ -193,14 +188,13 @@ function renderStocks() {
   const grid = document.getElementById('stocks-grid');
   if (!grid) return;
 
-  grid.innerHTML = FAANG_STOCKS.map(stock => {
+  grid.innerHTML = FAANG_DATA.map(stock => {
     const isPositive = stock.change >= 0;
     return `
       <div class="stock-card">
-        <div class="stock-icon">${stock.icon}</div>
         <div class="stock-info">
           <span class="stock-name">${stock.name}</span>
-          <span class="stock-ticker">${stock.ticker}</span>
+          <span class="stock-ticker">${stock.symbol}</span>
         </div>
         <div class="stock-price-group">
           <span class="stock-price">$${stock.price.toFixed(2)}</span>

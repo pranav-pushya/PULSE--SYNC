@@ -68,18 +68,32 @@ export async function getCityName(lat, lon) {
 
 // ─── News: fetch tech headlines with fallback ───
 export async function getTechNews() {
-  // Fallback news data
-  const fallback = [
-    { title: 'AI Revolution: New Language Models Break Performance Records', description: 'The latest generation of AI models are setting new benchmarks in natural language understanding.', url: '#', image: null, publishedAt: new Date().toISOString(), source: { name: 'TechCrunch' } },
-    { title: 'Quantum Computing Achieves New Milestone', description: 'Researchers demonstrate quantum advantage in complex optimization problems.', url: '#', image: null, publishedAt: new Date().toISOString(), source: { name: 'Wired' } },
-    { title: 'SpaceX Starship Completes Orbital Flight', description: 'SpaceX\'s massive rocket completes its first full orbital test flight successfully.', url: '#', image: null, publishedAt: new Date().toISOString(), source: { name: 'Space.com' } },
-    { title: 'New Cybersecurity Framework Released', description: 'NIST releases updated cybersecurity guidelines for critical infrastructure.', url: '#', image: null, publishedAt: new Date().toISOString(), source: { name: 'SecurityWeek' } },
-    { title: 'Breakthrough in Solid-State Battery Tech ', description: 'Scientists develop a solid-state battery with 2x the energy density of lithium-ion.', url: '#', image: null, publishedAt: new Date().toISOString(), source: { name: 'ArsTechnica' } },
-    { title: 'Open Source AI Models Gain Enterprise Adoption', description: 'Major companies are increasingly turning to open-source AI for production workloads.', url: '#', image: null, publishedAt: new Date().toISOString(), source: { name: 'VentureBeat' } },
-  ];
-
-  return fallback;
+  try {
+    const queries = ['technology', 'artificial intelligence', 'programming'];
+    const q = queries[Math.floor(Math.random() * queries.length)];
+    const res = await fetch(
+      `https://gnews.io/api/v4/search?q=${q}&lang=en&max=8&apikey=YOUR_GNEWS_KEY_HERE`
+    );
+    const data = await res.json();
+    if (!data.articles || !data.articles.length) throw new Error('No articles');
+    return data.articles.map(a => ({
+      source: { name: a.source.name },
+      title: a.title,
+      description: a.description,
+      url: a.url
+    }));
+  } catch {
+    return FALLBACK_NEWS;
+  }
 }
+
+const FALLBACK_NEWS = [
+  { source:{name:'TechCrunch'}, title:'OpenAI releases new model with improved reasoning capabilities', description:'The latest model shows significant improvements in mathematical and coding tasks.' },
+  { source:{name:'The Verge'}, title:'Google announces major updates to Android development tools', description:'New features aim to simplify app development and improve performance.' },
+  { source:{name:'Wired'}, title:'How quantum computing is changing cryptography forever', description:'Researchers make breakthrough in quantum error correction.' },
+  { source:{name:'Ars Technica'}, title:'Linux kernel 6.x brings major performance improvements', description:'The latest kernel update improves memory management and CPU scheduling.' },
+  { source:{name:'GitHub Blog'}, title:'GitHub Copilot now supports 10 new programming languages', description:'AI pair programmer expands language support across the platform.' },
+];
 
 // ─── Currency: fetch live USD exchange rates ───
 export async function getCurrencyRates() {
@@ -90,11 +104,23 @@ export async function getCurrencyRates() {
   return null;
 }
 
-// ─── Crypto: fetch top 6 coins with sparklines ───
+// ─── Crypto: fetch top 8 coins ───
 export async function getCryptoPrices() {
-  const url = `${API.CRYPTO}/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,cardano,ripple,dogecoin&order=market_cap_desc&per_page=6&sparkline=true&price_change_percentage=24h`;
-  const data = await fetchWithTimeout(url);
-  return data || [];
+  try {
+    const res = await fetch(
+      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,cardano,dogecoin,ripple,polkadot,chainlink&order=market_cap_desc&per_page=8&page=1&sparkline=false&price_change_percentage=24h',
+      {
+        headers: {
+          'Accept': 'application/json'
+        }
+      }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.warn('Crypto fetch failed:', err.message);
+    return [];
+  }
 }
 
 // ─── NASA: fetch Astronomy Picture of the Day ───
