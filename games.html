@@ -39,6 +39,14 @@
         <span><i class="ph ph-question"></i></span>
         <span>CS Quiz</span>
       </button>
+      <button class="game-select-btn" data-game="whack">
+        <span>🖱️</span>
+        <span>Whack-a-Bug</span>
+      </button>
+      <button class="game-select-btn" data-game="matchgame">
+        <span>🧠</span>
+        <span>Memory Match</span>
+      </button>
     </div>
   </div>
 
@@ -51,6 +59,20 @@
         <div>
           <h2 class="game-panel-title">🔐 Code Breaker</h2>
           <p class="game-panel-desc">Crack the secret 4-digit code in 6 attempts — like Wordle but for hackers!</p>
+          <div class="cb-level-selector" id="cb-level-selector">
+            <button class="cb-level-btn active" data-digits="4" data-attempts="6">
+              <span class="cb-level-name">🟢 Easy</span>
+              <span class="cb-level-detail">4 digits · 6 attempts</span>
+            </button>
+            <button class="cb-level-btn" data-digits="5" data-attempts="8">
+              <span class="cb-level-name">🟡 Medium</span>
+              <span class="cb-level-detail">5 digits · 8 attempts</span>
+            </button>
+            <button class="cb-level-btn" data-digits="6" data-attempts="10">
+              <span class="cb-level-name">🔴 Hard</span>
+              <span class="cb-level-detail">6 digits · 10 attempts</span>
+            </button>
+          </div>
         </div>
         <div class="game-panel-stats">
           <div class="game-stat-pill">
@@ -79,11 +101,8 @@
         <div class="cb-board" id="cb-board"></div>
 
         <div class="cb-input-area" id="cb-input-area">
-          <div class="cb-input-row">
-            <input type="number" class="cb-digit-input" id="cb-d1" min="0" max="9" maxlength="1" placeholder="?" />
-            <input type="number" class="cb-digit-input" id="cb-d2" min="0" max="9" maxlength="1" placeholder="?" />
-            <input type="number" class="cb-digit-input" id="cb-d3" min="0" max="9" maxlength="1" placeholder="?" />
-            <input type="number" class="cb-digit-input" id="cb-d4" min="0" max="9" maxlength="1" placeholder="?" />
+          <div class="cb-input-row" id="cb-input-row">
+            <!-- inputs injected by JS based on level -->
           </div>
           <button class="cb-submit-btn" id="cb-submit">Submit Guess →</button>
         </div>
@@ -149,6 +168,66 @@
           <p class="quiz-result-score" id="quiz-result-score"></p>
           <p class="quiz-result-msg" id="quiz-result-msg"></p>
           <button class="game-action-btn" id="quiz-restart-btn">Play Again ↺</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Whack-a-Bug Game -->
+    <div class="game-panel" id="panel-whack">
+      <div class="game-panel-header">
+        <div>
+          <h2 class="game-panel-title">🖱️ Whack-a-Bug</h2>
+          <p class="game-panel-desc">Squash the bugs before they crash your code! Click bugs ✅ avoid features!</p>
+        </div>
+        <div class="game-panel-stats">
+          <div class="game-stat-pill"><span>Score</span><span id="wam-score">0</span></div>
+          <div class="game-stat-pill"><span>Lives</span><span id="wam-lives">❤️❤️❤️</span></div>
+          <div class="game-stat-pill"><span>Time</span><span id="wam-time">30s</span></div>
+        </div>
+      </div>
+      <div class="wam-area">
+        <div class="wam-grid" id="wam-grid"></div>
+        <div class="wam-overlay" id="wam-overlay">
+          <div class="wam-overlay-icon">🖱️</div>
+          <h3 class="wam-overlay-title">Whack-a-Bug</h3>
+          <p class="wam-overlay-desc">Click 🐛 bugs to score +10! Avoid ✅ features or lose a life!</p>
+          <button class="game-action-btn" id="wam-start">Start Debugging →</button>
+        </div>
+        <div class="wam-result" id="wam-result" style="display:none;">
+          <span id="wam-result-icon" style="font-size:48px;">💥</span>
+          <h3 id="wam-result-title" style="color:#fff;font-size:20px;font-weight:700;">Done!</h3>
+          <p id="wam-result-msg" style="color:rgba(255,255,255,0.6);font-size:14px;"></p>
+          <button class="game-action-btn" id="wam-restart">Try Again 🖱️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memory Match Game -->
+    <div class="game-panel" id="panel-matchgame">
+      <div class="game-panel-header">
+        <div>
+          <h2 class="game-panel-title">🧠 Memory Match</h2>
+          <p class="game-panel-desc">Match pairs of CS concepts before time runs out!</p>
+        </div>
+        <div class="game-panel-stats">
+          <div class="game-stat-pill"><span>Moves</span><span id="mm-moves">0</span></div>
+          <div class="game-stat-pill"><span>Pairs</span><span id="mm-pairs">0/8</span></div>
+          <div class="game-stat-pill"><span>Time</span><span id="mm-time">60s</span></div>
+        </div>
+      </div>
+      <div class="mm-area">
+        <div class="mm-grid" id="mm-grid"></div>
+        <div class="mm-overlay" id="mm-overlay">
+          <div style="font-size:48px;">🧠</div>
+          <h3 style="color:#fff;font-size:20px;font-weight:700;margin:0;">Memory Match</h3>
+          <p style="color:rgba(255,255,255,0.6);font-size:13px;max-width:300px;margin:0;">Match all CS concept pairs before time runs out!</p>
+          <button class="game-action-btn" id="mm-start">Start Game →</button>
+        </div>
+        <div class="mm-result" id="mm-result" style="display:none;">
+          <span id="mm-result-icon" style="font-size:48px;">🧠</span>
+          <h3 id="mm-result-title" style="color:#fff;font-size:20px;font-weight:700;margin:0;"></h3>
+          <p id="mm-result-msg" style="color:rgba(255,255,255,0.6);font-size:13px;margin:0;"></p>
+          <button class="game-action-btn" id="mm-restart">Play Again ↺</button>
         </div>
       </div>
     </div>

@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
   createNavbar('games');
   createFooter();
   initGameSelector();
-  initCodeBreaker();
   initTypingGame();
   initQuizGame();
 });
@@ -36,208 +35,182 @@ function initGameSelector() {
 
 // ═══════════════════════════════════════
 // CODE BREAKER GAME
-// Crack the 4-digit secret code in 6 tries
-// Green = right digit right place
-// Yellow = right digit wrong place
-// Grey = digit not in code
 // ═══════════════════════════════════════
-function initCodeBreaker() {
-  let secretCode = [];
-  let attempts = 0;
+(function() {
+  let digits = 4;
   let maxAttempts = 6;
+  let secretCode = [];
+  let currentAttempt = 0;
   let wins = 0;
-  let bestAttempt = null;
-  let gameOver = false;
+  let bestAttempt = Infinity;
+  let gameActive = false;
 
-  // ─── Generate random 4-digit code ───
+  const board = document.getElementById('cb-board');
+  const inputRow = document.getElementById('cb-input-row');
+  const submitBtn = document.getElementById('cb-submit');
+  const newGameBtn = document.getElementById('cb-new-game');
+  const resultEl = document.getElementById('cb-result');
+  const resultIcon = document.getElementById('cb-result-icon');
+  const resultTitle = document.getElementById('cb-result-title');
+  const resultMsg = document.getElementById('cb-result-msg');
+  const restartBtn = document.getElementById('cb-restart');
+  const attemptsEl = document.getElementById('cb-attempts');
+  const winsEl = document.getElementById('cb-wins');
+  const bestEl = document.getElementById('cb-best');
+  const levelBtns = document.querySelectorAll('.cb-level-btn');
+  const descEl = document.querySelector('#panel-memory .game-panel-desc');
+
+  function buildInputs() {
+    inputRow.innerHTML = '';
+    for (let i = 0; i < digits; i++) {
+      const inp = document.createElement('input');
+      inp.type = 'number';
+      inp.className = 'cb-digit-input';
+      inp.id = `cb-d${i+1}`;
+      inp.min = 0; inp.max = 9;
+      inp.placeholder = '?';
+      inp.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g,'').slice(0,1);
+        const next = document.getElementById(`cb-d${i+2}`);
+        if (this.value && next) next.focus();
+      });
+      inp.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && !this.value) {
+          const prev = document.getElementById(`cb-d${i}`);
+          if (prev) prev.focus();
+        }
+        if (e.key === 'Enter') submitBtn.click();
+      });
+      inputRow.appendChild(inp);
+    }
+  }
+
   function generateCode() {
-    return Array.from({ length: 4 }, () => Math.floor(Math.random() * 10));
+    secretCode = [];
+    for (let i = 0; i < digits; i++) {
+      secretCode.push(Math.floor(Math.random() * 10));
+    }
   }
 
-  // ─── Initialize board with empty rows ───
-  function initBoard() {
-    const board = document.getElementById('cb-board');
-    if (!board) return;
-    board.innerHTML = Array.from({ length: maxAttempts }, (_, i) => `
-      <div class="cb-row" id="cb-row-${i}">
-        <div class="cb-cells">
-          <div class="cb-cell" id="cb-cell-${i}-0">?</div>
-          <div class="cb-cell" id="cb-cell-${i}-1">?</div>
-          <div class="cb-cell" id="cb-cell-${i}-2">?</div>
-          <div class="cb-cell" id="cb-cell-${i}-3">?</div>
-        </div>
-        <div class="cb-feedback" id="cb-feedback-${i}">
-          <span class="cb-dot grey"></span>
-          <span class="cb-dot grey"></span>
-          <span class="cb-dot grey"></span>
-          <span class="cb-dot grey"></span>
-        </div>
-      </div>
-    `).join('');
+  function startGame() {
+    generateCode();
+    currentAttempt = 0;
+    gameActive = true;
+    board.innerHTML = '';
+    resultEl.style.display = 'none';
+    document.getElementById('cb-input-area').style.display = 'block';
+    attemptsEl.textContent = maxAttempts;
+    buildInputs();
+    document.getElementById('cb-d1').focus();
   }
 
-  // ─── Check guess against secret code ───
-  function checkGuess(guess) {
-    const result = Array(4).fill('grey');
-    const codeCopy = [...secretCode];
-    const guessCopy = [...guess];
+  function getGuessColors(guess, secret) {
+    const result = Array(digits).fill('grey');
+    const secretLeft = [...secret];
+    const guessLeft = [...guess];
 
-    // First pass — find exact matches (green)
-    for (let i = 0; i < 4; i++) {
-      if (guess[i] === secretCode[i]) {
+    // First pass: correct position
+    for (let i = 0; i < digits; i++) {
+      if (guess[i] === secret[i]) {
         result[i] = 'green';
-        codeCopy[i] = null;
-        guessCopy[i] = null;
+        secretLeft[i] = null;
+        guessLeft[i] = null;
       }
     }
-
-    // Second pass — find wrong position matches (yellow)
-    for (let i = 0; i < 4; i++) {
-      if (guessCopy[i] === null) continue;
-      const idx = codeCopy.indexOf(guessCopy[i]);
+    // Second pass: wrong position
+    for (let i = 0; i < digits; i++) {
+      if (guessLeft[i] === null) continue;
+      const idx = secretLeft.indexOf(guessLeft[i]);
       if (idx !== -1) {
         result[i] = 'yellow';
-        codeCopy[idx] = null;
+        secretLeft[idx] = null;
       }
     }
-
     return result;
   }
 
-  // ─── Render a completed row ───
-  function renderRow(rowIdx, guess, result) {
-    guess.forEach((digit, i) => {
-      const cell = document.getElementById(`cb-cell-${rowIdx}-${i}`);
-      if (cell) {
-        cell.textContent = digit;
-        cell.classList.add(result[i]);
-      }
-    });
-
-    const feedback = document.getElementById(`cb-feedback-${rowIdx}`);
-    if (feedback) {
-      feedback.innerHTML = result.map(r =>
-        `<span class="cb-dot ${r}"></span>`
-      ).join('');
-    }
-  }
-
-  // ─── Handle guess submission ───
   function submitGuess() {
-    if (gameOver) return;
-
-    const inputs = ['cb-d1', 'cb-d2', 'cb-d3', 'cb-d4'];
-    const guess = inputs.map(id => {
-      const val = document.getElementById(id)?.value;
-      return val !== '' && val !== null ? parseInt(val) : null;
+    if (!gameActive) return;
+    const inputs = inputRow.querySelectorAll('.cb-digit-input');
+    const guess = [];
+    let valid = true;
+    inputs.forEach(inp => {
+      if (inp.value === '') valid = false;
+      else guess.push(parseInt(inp.value));
     });
-
-    // Validate — all 4 digits must be filled
-    if (guess.some(d => d === null || isNaN(d) || d < 0 || d > 9)) {
-      inputs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.classList.add('cb-input-error');
-          setTimeout(() => el.classList.remove('cb-input-error'), 500);
-        }
-      });
+    if (!valid) {
+      inputs.forEach(inp => { if (!inp.value) inp.style.borderColor = 'rgba(239,68,68,0.8)'; });
+      setTimeout(() => inputs.forEach(inp => inp.style.borderColor = ''), 600);
       return;
     }
 
-    const result = checkGuess(guess);
-    renderRow(attempts, guess, result);
-    attempts++;
+    currentAttempt++;
+    const colors = getGuessColors(guess, secretCode);
 
-    document.getElementById('cb-attempts').textContent = maxAttempts - attempts;
-
-    // Clear inputs and focus first
-    inputs.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
+    // Render row on board
+    const row = document.createElement('div');
+    row.className = 'cb-row';
+    guess.forEach((d, i) => {
+      const cell = document.createElement('div');
+      cell.className = `cb-cell ${colors[i]}`;
+      cell.textContent = d;
+      row.appendChild(cell);
     });
-    document.getElementById('cb-d1')?.focus();
+    board.appendChild(row);
 
-    // Check win
-    if (result.every(r => r === 'green')) {
+    // Clear inputs
+    inputs.forEach(inp => { inp.value = ''; });
+    inputs[0].focus();
+
+    const remaining = maxAttempts - currentAttempt;
+    attemptsEl.textContent = remaining;
+
+    // Win check
+    if (colors.every(c => c === 'green')) {
+      gameActive = false;
       wins++;
-      if (!bestAttempt || attempts < bestAttempt) bestAttempt = attempts;
-      document.getElementById('cb-wins').textContent = wins;
-      document.getElementById('cb-best').textContent = bestAttempt + ' tries';
-      showResult(true);
+      winsEl.textContent = wins;
+      if (currentAttempt < bestAttempt) {
+        bestAttempt = currentAttempt;
+        bestEl.textContent = currentAttempt;
+      }
+      showResult('🏆', 'Code Cracked!', `You got it in ${currentAttempt} attempt${currentAttempt > 1 ? 's' : ''}!`);
       return;
     }
 
-    // Check loss
-    if (attempts >= maxAttempts) {
-      showResult(false);
+    // Lose check
+    if (currentAttempt >= maxAttempts) {
+      gameActive = false;
+      showResult('💀', 'Access Denied', `The code was: ${secretCode.join(' ')}`);
     }
   }
 
-  // ─── Show win/loss result ───
-  function showResult(won) {
-    gameOver = true;
-    document.getElementById('cb-input-area').style.display = 'none';
-    document.getElementById('cb-action-row').style.display = 'none';
-
-    const resultEl = document.getElementById('cb-result');
+  function showResult(icon, title, msg) {
+    resultIcon.textContent = icon;
+    resultTitle.textContent = title;
+    resultMsg.textContent = msg;
     resultEl.style.display = 'flex';
-
-    if (won) {
-      document.getElementById('cb-result-icon').textContent = attempts <= 2 ? '🏆' : attempts <= 4 ? '🎉' : '😅';
-      document.getElementById('cb-result-title').textContent = attempts <= 2 ? 'Genius!' : attempts <= 4 ? 'Cracked It!' : 'Phew!';
-      document.getElementById('cb-result-msg').textContent = `You cracked the code ${secretCode.join('')} in ${attempts} attempt${attempts > 1 ? 's' : ''}!`;
-    } else {
-      document.getElementById('cb-result-icon').textContent = '💀';
-      document.getElementById('cb-result-title').textContent = 'Code Not Cracked!';
-      document.getElementById('cb-result-msg').textContent = `The secret code was ${secretCode.join('')}. Better luck next time!`;
-    }
+    document.getElementById('cb-input-area').style.display = 'none';
   }
 
-  // ─── Start new game ───
-  function newGame() {
-    secretCode = generateCode();
-    attempts = 0;
-    gameOver = false;
-
-    document.getElementById('cb-attempts').textContent = maxAttempts;
-    document.getElementById('cb-result').style.display = 'none';
-    document.getElementById('cb-input-area').style.display = 'flex';
-    document.getElementById('cb-action-row').style.display = 'flex';
-
-    initBoard();
-
-    // Focus first input
-    document.getElementById('cb-d1')?.focus();
-
-    // Auto-advance inputs
-    ['cb-d1', 'cb-d2', 'cb-d3', 'cb-d4'].forEach((id, idx, arr) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener('input', () => {
-        if (el.value.length >= 1 && idx < arr.length - 1) {
-          document.getElementById(arr[idx + 1])?.focus();
-        }
-      });
-      el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') submitGuess();
-        if (e.key === 'Backspace' && el.value === '' && idx > 0) {
-          document.getElementById(arr[idx - 1])?.focus();
-        }
-      });
+  // Level selector
+  levelBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      levelBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      digits = parseInt(btn.dataset.digits);
+      maxAttempts = parseInt(btn.dataset.attempts);
+      if (descEl) descEl.textContent = `Crack the secret ${digits}-digit code in ${maxAttempts} attempts — like Wordle but for hackers!`;
+      startGame();
     });
-  }
-
-  newGame();
-
-  document.getElementById('cb-submit')?.addEventListener('click', submitGuess);
-  document.getElementById('cb-new-game')?.addEventListener('click', newGame);
-  document.getElementById('cb-restart')?.addEventListener('click', () => {
-    newGame();
-    document.getElementById('cb-result').style.display = 'none';
-    document.getElementById('cb-input-area').style.display = 'flex';
-    document.getElementById('cb-action-row').style.display = 'flex';
   });
-}
+
+  if (submitBtn) submitBtn.addEventListener('click', submitGuess);
+  if (newGameBtn) newGameBtn.addEventListener('click', startGame);
+  if (restartBtn) restartBtn.addEventListener('click', startGame);
+
+  startGame();
+})();
 
 // ═══════════════════════════════════════
 // TYPING SPEED GAME
@@ -435,3 +408,223 @@ function initQuizGame() {
   renderQuestion();
   document.getElementById('quiz-restart-btn').addEventListener('click', () => { shuffleQuestions(); renderQuestion(); });
 }
+
+// ═══ WHACK-A-BUG GAME ═══
+(function() {
+  const BUGS = ['🐛','🦟','💀','☠️','🐞','🔴'];
+  const FEATURES = ['✅','⭐','🚀','💡','🟢','🔧'];
+  const HOLES = 12;
+  let score=0, lives=3, timeLeft=30, gameActive=false;
+  let moleTimer=null, countdown=null, activeHoles={};
+
+  const grid = document.getElementById('wam-grid');
+  const overlay = document.getElementById('wam-overlay');
+  const result = document.getElementById('wam-result');
+  const scoreEl = document.getElementById('wam-score');
+  const livesEl = document.getElementById('wam-lives');
+  const timeEl = document.getElementById('wam-time');
+  const startBtn = document.getElementById('wam-start');
+  const restartBtn = document.getElementById('wam-restart');
+
+  if (!grid) return;
+
+  // Build grid
+  for (let i=0; i<HOLES; i++) {
+    const hole = document.createElement('div');
+    hole.className = 'wam-hole';
+    hole.dataset.index = i;
+    hole.addEventListener('click', () => whack(i, hole));
+    grid.appendChild(hole);
+  }
+
+  function updateLives() {
+    livesEl.textContent = '❤️'.repeat(Math.max(0,lives)) + '🖤'.repeat(Math.max(0,3-lives));
+  }
+
+  function whack(idx, hole) {
+    if (!gameActive || !activeHoles[idx]) return;
+    const type = activeHoles[idx];
+    hole.classList.add('hit');
+    setTimeout(() => hole.classList.remove('hit'), 150);
+    if (type === 'bug') {
+      score += 10;
+      scoreEl.textContent = score;
+      hole.textContent = '💥';
+      setTimeout(() => {
+        if (activeHoles[idx]) {
+          hole.textContent = '';
+          hole.className = 'wam-hole';
+          delete activeHoles[idx];
+        }
+      }, 180);
+    } else {
+      lives--;
+      updateLives();
+      hole.style.borderColor = 'rgba(239,68,68,0.9)';
+      setTimeout(() => { hole.style.borderColor = ''; }, 400);
+      if (lives <= 0) endGame();
+    }
+  }
+
+  function spawnMole() {
+    if (!gameActive) return;
+    const holes = grid.querySelectorAll('.wam-hole');
+    const empty = [...holes].filter(h => !activeHoles[h.dataset.index]);
+    if (!empty.length) return;
+    const hole = empty[Math.floor(Math.random()*empty.length)];
+    const idx = hole.dataset.index;
+    const isBug = Math.random() < 0.65;
+    const emoji = isBug
+      ? BUGS[Math.floor(Math.random()*BUGS.length)]
+      : FEATURES[Math.floor(Math.random()*FEATURES.length)];
+    activeHoles[idx] = isBug ? 'bug' : 'feature';
+    hole.textContent = emoji;
+    hole.classList.add(isBug ? 'bug' : 'feature');
+    const stay = Math.max(400, 1000 - (30-timeLeft)*18);
+    setTimeout(() => {
+      if (activeHoles[idx]) {
+        hole.textContent = '';
+        hole.className = 'wam-hole';
+        delete activeHoles[idx];
+      }
+    }, stay);
+  }
+
+  function startGame() {
+    score=0; lives=3; timeLeft=30; gameActive=true; activeHoles={};
+    scoreEl.textContent=0; updateLives(); timeEl.textContent='30s';
+    overlay.style.display='none';
+    result.style.display='none';
+    grid.querySelectorAll('.wam-hole').forEach(h=>{h.textContent='';h.className='wam-hole';});
+    moleTimer = setInterval(spawnMole, 650);
+    countdown = setInterval(() => {
+      timeLeft--;
+      timeEl.textContent = timeLeft+'s';
+      if (timeLeft<=0) endGame();
+    }, 1000);
+  }
+
+  function endGame() {
+    gameActive=false;
+    clearInterval(moleTimer); clearInterval(countdown);
+    activeHoles={};
+    grid.querySelectorAll('.wam-hole').forEach(h=>{h.textContent='';h.className='wam-hole';});
+    document.getElementById('wam-result-icon').textContent = score>=100?'🏆':score>=50?'👍':'💀';
+    document.getElementById('wam-result-title').textContent = score>=100?'Bug Slayer!':score>=50?'Decent Debugger':'Bugs Won';
+    document.getElementById('wam-result-msg').textContent = `Score: ${score} — squashed ${Math.floor(score/10)} bugs!`;
+    result.style.display='flex';
+  }
+
+  if (startBtn) startBtn.addEventListener('click', startGame);
+  if (restartBtn) restartBtn.addEventListener('click', startGame);
+})();
+
+// ═══ MEMORY MATCH GAME ═══
+(function() {
+  const PAIRS = [
+    {emoji:'🔁', label:'Loop'},
+    {emoji:'📦', label:'Array'},
+    {emoji:'🌲', label:'Tree'},
+    {emoji:'🔗', label:'LinkedList'},
+    {emoji:'📚', label:'Stack'},
+    {emoji:'🚶', label:'Queue'},
+    {emoji:'🗝️', label:'HashMap'},
+    {emoji:'🔀', label:'Sort'},
+  ];
+
+  let cards=[], flipped=[], matched=0, moves=0, timeLeft=60, timer=null, canFlip=true;
+
+  const grid = document.getElementById('mm-grid');
+  const overlay = document.getElementById('mm-overlay');
+  const result = document.getElementById('mm-result');
+  const movesEl = document.getElementById('mm-moves');
+  const pairsEl = document.getElementById('mm-pairs');
+  const timeEl = document.getElementById('mm-time');
+  const startBtn = document.getElementById('mm-start');
+  const restartBtn = document.getElementById('mm-restart');
+
+  if (!grid) return;
+
+  function shuffle(arr) {
+    return [...arr].sort(() => Math.random()-0.5);
+  }
+
+  function buildGrid() {
+    grid.innerHTML = '';
+    cards = [];
+    flipped = [];
+    matched = 0; moves = 0;
+    movesEl.textContent = 0;
+    pairsEl.textContent = '0/8';
+    const deck = shuffle([...PAIRS, ...PAIRS]);
+    deck.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'mm-card';
+      card.dataset.label = item.label;
+      card.innerHTML = `
+        <div class="mm-front">?</div>
+        <div class="mm-back">${item.emoji}<br>${item.label}</div>
+      `;
+      card.addEventListener('click', () => flipCard(card));
+      grid.appendChild(card);
+      cards.push(card);
+    });
+  }
+
+  function flipCard(card) {
+    if (!canFlip) return;
+    if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+    if (flipped.length >= 2) return;
+    card.classList.add('flipped');
+    flipped.push(card);
+    if (flipped.length === 2) {
+      moves++;
+      movesEl.textContent = moves;
+      canFlip = false;
+      setTimeout(checkMatch, 700);
+    }
+  }
+
+  function checkMatch() {
+    const [a, b] = flipped;
+    if (a.dataset.label === b.dataset.label) {
+      a.classList.add('matched');
+      b.classList.add('matched');
+      matched++;
+      pairsEl.textContent = `${matched}/8`;
+      if (matched === 8) endGame(true);
+    } else {
+      a.classList.remove('flipped');
+      b.classList.remove('flipped');
+    }
+    flipped = [];
+    canFlip = true;
+  }
+
+  function startGame() {
+    buildGrid();
+    timeLeft = 60;
+    timeEl.textContent = '60s';
+    overlay.style.display = 'none';
+    result.style.display = 'none';
+    clearInterval(timer);
+    timer = setInterval(() => {
+      timeLeft--;
+      timeEl.textContent = timeLeft+'s';
+      if (timeLeft <= 0) endGame(false);
+    }, 1000);
+  }
+
+  function endGame(won) {
+    clearInterval(timer);
+    document.getElementById('mm-result-icon').textContent = won ? '🏆' : '⏰';
+    document.getElementById('mm-result-title').textContent = won ? 'Memory Master!' : 'Time\'s Up!';
+    document.getElementById('mm-result-msg').textContent = won
+      ? `Completed in ${moves} moves!`
+      : `You matched ${matched}/8 pairs in ${moves} moves.`;
+    result.style.display = 'flex';
+  }
+
+  if (startBtn) startBtn.addEventListener('click', startGame);
+  if (restartBtn) restartBtn.addEventListener('click', startGame);
+})();
