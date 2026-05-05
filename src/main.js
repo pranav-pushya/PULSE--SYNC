@@ -3,6 +3,7 @@ import { createFooter } from './head-foot/footer.js';
 import { initScrollReveal, initParticles, typeWriter, initTiltCards } from './api/animations.js';
 import { getProgrammingJoke, getTechNews, sendGeminiMessage } from './api/api.js';
 
+
 // ═══════════════════════════════════════
 // PAGE INITIALIZATION
 // Runs all setup functions when DOM is ready

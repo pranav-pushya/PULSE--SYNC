@@ -13,13 +13,13 @@
 
 ## 🖥️ Screenshots
 
-| Page | Preview |
-|------|---------|
-| 🏠 **Home** | ![Home](assets/screenshots/home.png) |
-| 💰 **Finance** | ![Finance](assets/screenshots/finance.png) |
-| 🔭 **Space** | ![Science](assets/screenshots/sceince.png) |
+| Page            | Preview                                      |
+| --------------- | -------------------------------------------- |
+| 🏠 **Home**     | ![Home](assets/screenshots/home.png)         |
+| 💰 **Finance**  | ![Finance](assets/screenshots/finance.png)   |
+| 🔭 **Space**    | ![Science](assets/screenshots/sceince.png)   |
 | 🧭 **Discover** | ![Discover](assets/screenshots/discover.png) |
-| 🎮 **Games** | ![Games](assets/screenshots/games.png) |
+| 🎮 **Games**    | ![Games](assets/screenshots/games.png)       |
 
 ---
 
@@ -40,6 +40,7 @@ PULSE-SYNC is a multi-page real-time student dashboard that aggregates live data
 ## ✨ Features
 
 ### 🏠 Home Page
+
 - **PULSE AI Chatbot** — Powered by Groq (llama-3.1-8b), full conversation history
 - **Live Tech News** — Latest tech headlines
 - **🌤️ Weather Popup** — Draggable modal, GPS auto-detect, city search
@@ -48,12 +49,14 @@ PULSE-SYNC is a multi-page real-time student dashboard that aggregates live data
 - **Interactive Background** — Geometric parallax shapes that follow cursor
 
 ### 💰 Finance Page
+
 - **Live Crypto Markets** — Top 8 coins via CoinGecko (BTC, ETH, SOL...)
 - **Currency Converter** — 170+ currencies, live exchange rates
 - **Finance Glossary** — Key terms for CS students
 - **Animated Background** — Signal graph waves that bend with cursor
 
 ### 🔭 Science & Space Page
+
 - **NASA APOD** — Astronomy Picture of the Day with description
 - **ISS Live Tracker** — Real-time position, altitude, speed
 - **Space News** — Latest exploration headlines
@@ -61,46 +64,49 @@ PULSE-SYNC is a multi-page real-time student dashboard that aggregates live data
 - **Animated Background** — Deep nebula star field with cursor lens effect
 
 ### 🧭 Discover Page
+
 - **GitHub Trending** — What devs are building right now
 - **Tech Timeline** — Computing history 1940s to present
 - **CS Career Paths** — Top company profiles and interview prep
 - **Animated Background** — Constellation nodes with cursor activation
 
 ### 🎮 Games Page
+
 - **Code Breaker** — Wordle-style 4-digit code cracker (6 attempts)
 - **Type Rush** — Code typing speed test (WPM + accuracy)
 - **CS Quiz** — 10-question CS knowledge test with streaks
 - **Whack-a-Bug** — CS-themed Whack-a-Mole game
+- **Memory Match** — Match the pairs of cards
 - **Animated Background** — RGB neon circuit panels, cursor-reactive
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|---|---|
-| **Frontend** | HTML5, CSS3, Vanilla JavaScript (ES6+) |
-| **Build Tool** | Vite |
-| **Deployment** | Netlify |
-| **AI** | Groq API (llama-3.1-8b-instant) |
-| **Animation** | HTML5 Canvas API |
-| **Styling** | Custom CSS — Glassmorphism + per-page dark themes |
+| Category       | Technology                                        |
+| -------------- | ------------------------------------------------- |
+| **Frontend**   | HTML5, CSS3, Vanilla JavaScript (ES6+)            |
+| **Build Tool** | Vite                                              |
+| **Deployment** | Netlify                                           |
+| **AI**         | Groq API (llama-3.1-8b-instant)                   |
+| **Animation**  | HTML5 Canvas API                                  |
+| **Styling**    | Custom CSS — Glassmorphism + per-page dark themes |
 
 ---
 
 ## 🔌 APIs Used
 
-| API | Purpose | Cost |
-|---|---|---|
-| [Groq](https://groq.com/) | AI Chatbot | Free |
-| [Open-Meteo](https://open-meteo.com/) | Weather data | Free, no key |
-| [CoinGecko](https://www.coingecko.com/en/api) | Crypto prices | Free |
-| [open.er-api](https://www.exchangerate-api.com/) | Currency rates | Free |
-| [NASA API](https://api.nasa.gov/) | APOD + Space | Free key |
-| [Where the ISS At](https://wheretheiss.at/) | ISS live position | Free, no key |
-| [GNews](https://gnews.io/) | Tech headlines | Free tier |
-| [JokeAPI](https://jokeapi.dev/) | Programming jokes | Free, no key |
-| [Nominatim](https://nominatim.org/) | Geocoding | Free, no key |
+| API                                              | Purpose           | Cost         |
+| ------------------------------------------------ | ----------------- | ------------ |
+| [Groq](https://groq.com/)                        | AI Chatbot        | Free         |
+| [Open-Meteo](https://open-meteo.com/)            | Weather data      | Free, no key |
+| [CoinGecko](https://www.coingecko.com/en/api)    | Crypto prices     | Free         |
+| [open.er-api](https://www.exchangerate-api.com/) | Currency rates    | Free         |
+| [NASA API](https://api.nasa.gov/)                | APOD + Space      | Free key     |
+| [Where the ISS At](https://wheretheiss.at/)      | ISS live position | Free, no key |
+| [GNews](https://gnews.io/)                       | Tech headlines    | Free tier    |
+| [JokeAPI](https://jokeapi.dev/)                  | Programming jokes | Free, no key |
+| [Nominatim](https://nominatim.org/)              | Geocoding         | Free, no key |
 
 ---
 
@@ -138,6 +144,7 @@ PULSE-SYNC/
 ## ⚙️ Getting Started
 
 ### Prerequisites
+
 - Node.js v18+
 - npm
 
@@ -151,7 +158,9 @@ cd PULSE--SYNC
 # Install dependencies
 npm install
 ```
+
 Get free keys at:
+
 - Groq → [console.groq.com](https://console.groq.com/)
 - NASA → [api.nasa.gov](https://api.nasa.gov/)
 - GNews → [gnews.io](https://gnews.io/)
@@ -181,10 +190,10 @@ For Netlify: add keys via **Site Settings → Environment Variables**.
 
 ## 👥 Team — Group 2G3
 
-| Role | Name |
-|---|---|
-| 🧑‍💻 Team Lead & Developer | Pranav Pushya |
-| 🎨 UI Designer | Shubhangi Savant |
+| Role                     | Name             |
+| ------------------------ | ---------------- |
+| 🧑‍💻 Team Lead & Developer | Pranav Pushya    |
+| 🎨 UI Designer           | Shubhangi Savant |
 
 **Institution:** Chitkara University, Punjab  
 **Program:** B.Tech CSE (AI/ML) — Semester 2  

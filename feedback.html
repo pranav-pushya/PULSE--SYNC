@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feedback | PULSE-SYNC</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📃</text></svg>" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #08091a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Aurora background */
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.35;
+      animation: auroraFloat 10s ease-in-out infinite;
+    }
+
+    .blob-1 {
+      width: 320px; height: 320px;
+      top: -80px; left: -60px;
+      background: radial-gradient(circle, #7c3aed, transparent 70%);
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      width: 280px; height: 280px;
+      bottom: -60px; right: -40px;
+      background: radial-gradient(circle, #06b6d4, transparent 70%);
+      animation-delay: -4s;
+    }
+
+    .blob-3 {
+      width: 200px; height: 200px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, #4f46e5, transparent 70%);
+      animation-delay: -7s;
+      opacity: 0.2;
+    }
+
+    @keyframes auroraFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(18px, -12px) scale(1.06); }
+      66%       { transform: translate(-12px, 16px) scale(0.95); }
+    }
+
+    /* Form card */
+    .form-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(167, 139, 250, 0.25);
+      border-radius: 20px;
+      padding: 28px 28px 24px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+      margin: 16px;
+    }
+
+    /* Header */
+    .form-header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .form-logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      background: linear-gradient(135deg, #a78bfa, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 2px;
+    }
+
+    .form-subtitle {
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* Field group */
+    .field-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 5px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .required-star {
+      color: #f87171;
+      margin-left: 2px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(167,139,250,0.2);
+      border-radius: 10px;
+      padding: 10px 13px;
+      color: #fff;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: rgba(255,255,255,0.25);
+    }
+
+    select option {
+      background: #1a1830;
+      color: #fff;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(167,139,250,0.7);
+      background: rgba(255,255,255,0.09);
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.12);
+    }
+
+    input.valid, select.valid, textarea.valid {
+      border-color: rgba(52,211,153,0.7);
+      box-shadow: 0 0 0 3px rgba(52,211,153,0.1);
+    }
+
+    input.invalid, select.invalid, textarea.invalid {
+      border-color: rgba(248,113,113,0.7);
+      box-shadow: 0 0 0 3px rgba(248,113,113,0.1);
+    }
+
+    textarea {
+      resize: none;
+      height: 88px;
+      line-height: 1.5;
+    }
+
+    /* Error message */
+    .error-msg {
+      font-size: 11px;
+      color: #f87171;
+      margin-top: 4px;
+      min-height: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .error-msg.show {
+      opacity: 1;
+    }
+
+    .error-msg::before {
+      content: '⚠';
+      font-size: 10px;
+    }
+
+    /* Char counter */
+    .field-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .char-count {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 4px;
+    }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%;
+      padding: 11px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      margin-top: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      opacity: 0.88;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(124,58,237,0.4);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Success state */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 16px 0 8px;
+    }
+
+    .success-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .success-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .success-msg {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .close-btn {
+      padding: 9px 28px;
+      background: rgba(167,139,250,0.15);
+      border: 1px solid rgba(167,139,250,0.35);
+      border-radius: 10px;
+      color: #a78bfa;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+
+    .close-btn:hover { background: rgba(167,139,250,0.25); }
+
+    /* Progress bar */
+    .progress-bar-wrap {
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #06b6d4);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Fullscreen note */
+    .fullscreen-note {
+      text-align: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+      margin-top: 14px;
+      letter-spacing: 0.03em;
+    }
+  </style>
+</head>
+<body>
+
+<div class="aurora">
+  <div class="aurora-blob blob-1"></div>
+  <div class="aurora-blob blob-2"></div>
+  <div class="aurora-blob blob-3"></div>
+</div>
+
+<div class="form-card">
+  <div class="form-header">
+    <div class="form-logo">⚡ PULSE-SYNC</div>
+    <div class="form-subtitle">Share your feedback with us</div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+
+  <form id="feedback-form" novalidate>
+
+    <!-- Name -->
+    <div class="field-group">
+      <label for="f-name">Full Name <span class="required-star">*</span></label>
+      <input type="text" id="f-name" placeholder="e.g. Pranav Pushya" maxlength="50" autocomplete="off" />
+      <div class="error-msg" id="err-name"></div>
+    </div>
+
+    <!-- Email -->
+    <div class="field-group">
+      <label for="f-email">Email Address <span class="required-star">*</span></label>
+      <input type="email" id="f-email" placeholder="e.g. pranav@chitkara.edu.in" maxlength="80" autocomplete="off" />
+      <div class="error-msg" id="err-email"></div>
+    </div>
+
+    <!-- Subject -->
+    <div class="field-group">
+      <label for="f-subject">Subject <span class="required-star">*</span></label>
+      <select id="f-subject">
+        <option value="">— Select a topic —</option>
+        <option value="bug">🐛 Bug Report</option>
+        <option value="feature">✨ Feature Request</option>
+        <option value="general">💬 General Feedback</option>
+        <option value="appreciation">❤️ Appreciation</option>
+        <option value="other">📌 Other</option>
+      </select>
+      <div class="error-msg" id="err-subject"></div>
+    </div>
+
+    <!-- Message -->
+    <div class="field-group">
+      <label for="f-message">Message <span class="required-star">*</span></label>
+      <textarea id="f-message" placeholder="Tell us what you think (min. 20 characters)..." maxlength="500"></textarea>
+      <div class="field-meta">
+        <div class="error-msg" id="err-message"></div>
+        <div class="char-count" id="char-count">0 / 500</div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submit-btn" disabled>
+      Send Feedback →
+    </button>
+
+  </form>
+
+  <!-- Success screen (hidden initially) -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">Feedback Received!</div>
+    <div class="success-msg">
+      Thank you for helping us improve PULSE-SYNC.<br/>
+      We'll review your message shortly.
+    </div>
+    <button class="close-btn" onclick="window.close()">Close Window ✕</button>
+  </div>
+
+  <div class="fullscreen-note" id="fs-note"></div>
+</div>
+
+<script>
+  const fields = {
+    name:    document.getElementById('f-name'),
+    email:   document.getElementById('f-email'),
+    subject: document.getElementById('f-subject'),
+    message: document.getElementById('f-message'),
+  };
+
+  const errors = {
+    name:    document.getElementById('err-name'),
+    email:   document.getElementById('err-email'),
+    subject: document.getElementById('err-subject'),
+    message: document.getElementById('err-message'),
+  };
+
+  const submitBtn   = document.getElementById('submit-btn');
+  const progressBar = document.getElementById('progress-fill');
+  const charCount   = document.getElementById('char-count');
+  const form        = document.getElementById('feedback-form');
+  const successEl   = document.getElementById('success-screen');
+  const fsNote      = document.getElementById('fs-note');
+
+  // ── Validation rules ──
+  const rules = {
+    name:    v => v.trim().length < 3    ? 'Name must be at least 3 characters.' : '',
+    email:   v => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? 'Enter a valid email address.' : '',
+    subject: v => !v                     ? 'Please select a subject.' : '',
+    message: v => v.trim().length < 20  ? `Message too short (${v.trim().length}/20 chars min).` : '',
+  };
+
+  // ── Validate single field ──
+  function validateField(key, showError = true) {
+    const val = fields[key].value;
+    const msg = rules[key](val);
+    const isValid = msg === '';
+
+    if (showError) {
+      fields[key].classList.toggle('valid',   isValid);
+      fields[key].classList.toggle('invalid', !isValid);
+      errors[key].textContent = msg;
+      errors[key].classList.toggle('show', !isValid);
+    }
+    return isValid;
+  }
+
+  // ── Update progress bar & submit button ──
+  function updateProgress() {
+    const results = Object.keys(rules).map(k => rules[k](fields[k].value) === '');
+    const count   = results.filter(Boolean).length;
+    const pct     = (count / 4) * 100;
+    progressBar.style.width = pct + '%';
+    submitBtn.disabled = count < 4;
+  }
+
+  // ── Char counter for message ──
+  fields.message.addEventListener('input', () => {
+    const len = fields.message.value.length;
+    charCount.textContent = len + ' / 500';
+    if (len > 400) charCount.style.color = '#f87171';
+    else charCount.style.color = 'rgba(255,255,255,0.3)';
+    validateField('message', fields.message.dataset.touched);
+    updateProgress();
+  });
+
+  // ── Attach blur + input listeners ──
+  Object.keys(fields).forEach(key => {
+    fields[key].addEventListener('blur', () => {
+      fields[key].dataset.touched = 'true';
+      validateField(key, true);
+      updateProgress();
+    });
+    fields[key].addEventListener('input', () => {
+      if (fields[key].dataset.touched) {
+        validateField(key, true);
+      }
+      updateProgress();
+    });
+  });
+
+  // ── Form submit ──
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Validate all fields on submit
+    const allValid = Object.keys(rules).every(k => {
+      fields[k].dataset.touched = 'true';
+      return validateField(k, true);
+    });
+
+    if (!allValid) return;
+
+    // Show success
+    form.style.display        = 'none';
+    successEl.style.display   = 'block';
+    fsNote.style.display      = 'none';
+
+    // Auto close after 4 seconds
+    setTimeout(() => window.close(), 4000);
+  });
+
+  // ── Fullscreen detection ──
+  function checkFullscreen() {
+    const isFullscreen = window.outerWidth >= screen.width * 0.95;
+    if (isFullscreen) {
+      fsNote.textContent = '💡 Tip: This window looks best in its original size.';
+    } else {
+      fsNote.textContent = '';
+    }
+  }
+
+  window.addEventListener('resize', checkFullscreen);
+  checkFullscreen();
+</script>
+</body>
+</html>
