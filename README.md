@@ -87,7 +87,7 @@ PULSE-SYNC is a multi-page real-time student dashboard that aggregates live data
 | -------------- | ------------------------------------------------- |
 | **Frontend**   | HTML5, CSS3, Vanilla JavaScript (ES6+)            |
 | **Build Tool** | Vite                                              |
-| **Deployment** | Netlify                                           |
+| **Deployment** | Vercel                                            |
 | **AI**         | Groq API (llama-3.1-8b-instant)                   |
 | **Animation**  | HTML5 Canvas API                                  |
 | **Styling**    | Custom CSS — Glassmorphism + per-page dark themes |
