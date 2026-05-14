@@ -3461,7 +3461,7 @@ img {
 }
 
 /* ─── Finance Tabs ─── */
-.finance-tabs-wrapper {
+.finance-tabs-wrapper-DELETED {
   position: sticky;
   top: 56px;
   z-index: 100;
@@ -5749,3 +5749,413 @@ body {
   from { transform: translateX(120%); opacity: 0; }
   to   { transform: translateX(0);    opacity: 1; }
 } */ 
+
+/* ═══════════════════════════════════════
+   Subpage Navigation (Finance, Science, Discover, Games)
+   ═══════════════════════════════════════ */
+
+/* FINANCE & DISCOVER */
+.finance-tabs-wrapper-DELETED-2 {
+  position: sticky;
+  top: 56px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 12px 24px;
+  background: rgba(10, 8, 30, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.finance-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50px;
+  padding: 5px 6px;
+  width: fit-content;
+}
+
+.finance-tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
+.finance-tab:hover {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.finance-tab.active {
+  background: rgba(167, 139, 250, 0.18);
+  color: #a78bfa;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  font-weight: 600;
+}
+
+.finance-tab-content {
+  display: none;
+}
+
+.finance-tab-content.active {
+  display: block;
+}
+
+/* SCIENCE */
+.science-tabs-wrapper {
+  position: sticky;
+  top: 56px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 12px 24px;
+  background: rgba(4, 3, 10, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.science-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50px;
+  padding: 5px 6px;
+  width: fit-content;
+}
+
+.science-tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
+.science-tab:hover {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.science-tab.active {
+  background: rgba(96, 165, 250, 0.18);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  font-weight: 600;
+}
+
+.science-tab-content {
+  display: none;
+}
+
+.science-tab-content.active {
+  display: block;
+}
+
+/* GAMES */
+.games-selector-wrapper {
+  position: sticky;
+  top: 56px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 12px 24px;
+  background: rgba(8, 8, 8, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.games-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50px;
+  padding: 5px 6px;
+  width: fit-content;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
+.game-select-btn:hover {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.game-select-btn.active {
+  background: rgba(192, 38, 211, 0.18);
+  color: #c026d3;
+  border: 1px solid rgba(192, 38, 211, 0.3);
+  font-weight: 600;
+}
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+@keyframes toastIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+} */ 
+
+/* ═══════════════════════════════════════
+   Subpage Navigation (Finance, Science, Discover, Games)
+   ═══════════════════════════════════════ */
+
+/* FINANCE & DISCOVER */
+.finance-tabs-wrapper {
+  position: sticky;
+  top: 56px;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 10px 24px;
+  background: transparent;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.finance-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50px;
+  padding: 4px 5px;
+  margin: 0 auto;
+}
+
+.finance-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 50px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1001;
+}
+
+.finance-tab:hover {
+  color: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.07);
+}
+
+.finance-tab.active {
+  background: rgba(167,139,250,0.15);
+  border-color: rgba(167,139,250,0.35);
+  color: #a78bfa;
+  font-weight: 600;
+}
+
+.finance-tab-content {
+  display: none;
+  position: relative;
+  z-index: 1;
+}
+
+.finance-tab-content.active {
+  display: block;
+}
+
+/* SCIENCE */
+.science-tabs-wrapper {
+  position: sticky;
+  top: 56px;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  padding: 10px 24px;
+  background: transparent;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: none;
+}
+
+.science-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50px;
+  padding: 4px 5px;
+}
+
+.science-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 50px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1001;
+}
+
+.science-tab:hover {
+  color: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.07);
+}
+
+.science-tab.active {
+  background: rgba(96,165,250,0.15);
+  border-color: rgba(96,165,250,0.35);
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.science-tab-content {
+  display: none;
+  position: relative;
+  z-index: 1;
+}
+
+.science-tab-content.active {
+  display: block;
+}
+
+/* GAMES */
+.games-selector-wrapper {
+  position: sticky;
+  top: 56px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 12px 24px;
+  background: transparent;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: none;
+}
+
+.games-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50px;
+  padding: 5px 6px;
+  width: fit-content;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 50px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
+.game-select-btn:hover {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.game-select-btn.active {
+  background: rgba(192, 38, 211, 0.18);
+  color: #c026d3;
+  border: 1px solid rgba(192, 38, 211, 0.3);
+  font-weight: 600;
+}
+
+.game-panel {
+  display: none;
+}
+
+.game-panel.active {
+  display: block;
+}
+
+body > *:not(canvas) {
+  position: relative;
+  z-index: 1;
+}
+
+.pulse-navbar {
+  z-index: 99999 !important;
+}
+
+.finance-tabs-wrapper,
+.science-tabs-wrapper,
+.games-selector-wrapper {
+  z-index: 1000 !important;
+}

@@ -11,6 +11,7 @@ export default defineConfig({
         science: resolve(__dirname, 'science.html'),
         discover: resolve(__dirname, 'discover.html'),
         games: resolve(__dirname, 'games.html'),
+        feedback: resolve(__dirname, 'feedback.html'),
       },
     },
   },
