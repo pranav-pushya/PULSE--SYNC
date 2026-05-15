@@ -85,33 +85,9 @@ export function createFooter() {
 document.body.insertAdjacentHTML('beforeend', footerHTML);
 
   // ─── Feedback button BOM logic ───
-  document.addEventListener('click', function handleFeedback(e) {
+  document.addEventListener('click', function(e) {
     const btn = e.target.closest('#footer-feedback-btn');
     if (!btn) return;
-
-    const formW = 480;
-    const formH = 620;
-    const screenW    = window.screen.width;
-    const screenH    = window.screen.height;
-    const screenLeft = window.screen.availLeft !== undefined ? window.screen.availLeft : 0;
-    const screenTop  = window.screen.availTop  !== undefined ? window.screen.availTop  : 0;
-    const left = screenLeft + Math.round((screenW - formW) / 2);
-    const top  = screenTop  + Math.round((screenH - formH) / 2);
-
-    const features = [
-      'width='  + formW,
-      'height=' + formH,
-      'left='   + left,
-      'top='    + top,
-      'resizable=yes',
-      'scrollbars=no',
-      'toolbar=no',
-      'menubar=no',
-      'location=no',
-      'status=no',
-    ].join(',');
-
-    const popup = window.open('/feedback.html', 'PulseFeedback', features);
-    if (popup) popup.focus();
+    window.open('/feedback.html', '_blank');
   });
 }
