@@ -25,7 +25,7 @@
 
 ## 🚀 Live Demo
 
-**[https://pulse-sync-api.netlify.app](https://pulse-sync-api.netlify.app/)**
+**[https://pulse-sync-eight.vercel.app/](https://pulse-sync-eight.vercel.app/)**
 
 ---
 
@@ -211,6 +211,6 @@ MIT License — free to use, modify, and distribute.
 
 **⚡ Built with passion by Group 2G3 — Chitkara University**
 
-[🌐 Live Site](https://pulse-sync-api.netlify.app/) · [🐛 Report Bug](https://github.com/pranav-pushya/PULSE--SYNC/issues) · [✨ Request Feature](https://github.com/pranav-pushya/PULSE--SYNC/issues)
+[🌐 Live Site](https://pulse-sync-eight.vercel.app/) · [🐛 Report Bug](https://github.com/pranav-pushya/PULSE--SYNC/issues) · [✨ Request Feature](https://github.com/pranav-pushya/PULSE--SYNC/issues)
 
 </div>
