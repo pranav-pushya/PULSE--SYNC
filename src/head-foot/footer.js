@@ -84,24 +84,34 @@ export function createFooter() {
   `;
 document.body.insertAdjacentHTML('beforeend', footerHTML);
 
-  const btn = document.getElementById('footer-feedback-btn');
+  // ─── Feedback button BOM logic ───
+  setTimeout(() => {
+    const footerFeedbackBtn = document.getElementById('footer-feedback-btn');
+    if (!footerFeedbackBtn) return;
 
-  if (btn) {
-    btn.addEventListener('click', () => {
-
-      const width = 500;
-      const height = 700;
-
-      const left = (screen.width - width) / 2;
-      const top = (screen.height - height) / 2;
-
-      window.open(
-        "feedback.html",
-        "FeedbackWindow",
-        `width=${width},height=${height},top=${top},left=${left},resizable=yes`
-      );
+    footerFeedbackBtn.addEventListener('click', () => {
+      const formW = 480;
+      const formH = 620;
+      const screenW   = window.screen.width;
+      const screenH   = window.screen.height;
+      const screenLeft = window.screen.availLeft !== undefined ? window.screen.availLeft : 0;
+      const screenTop  = window.screen.availTop  !== undefined ? window.screen.availTop  : 0;
+      const left = screenLeft + Math.round((screenW - formW) / 2);
+      const top  = screenTop  + Math.round((screenH - formH) / 2);
+      const features = [
+        'width='  + formW,
+        'height=' + formH,
+        'left='   + left,
+        'top='    + top,
+        'resizable=yes',
+        'scrollbars=no',
+        'toolbar=no',
+        'menubar=no',
+        'location=no',
+        'status=no',
+      ].join(',');
+      const popup = window.open('/feedback.html', 'PulseFeedback', features);
+      if (popup) popup.focus();
     });
-  } else {
-    console.error("Button not found (footer not rendered yet)");
-  }
+  }, 300);
 }

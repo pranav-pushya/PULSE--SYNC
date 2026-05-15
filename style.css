@@ -6097,14 +6097,19 @@ body {
 .games-selector-wrapper {
   position: sticky;
   top: 56px;
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   justify-content: center;
-  padding: 12px 24px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 24px;
   background: transparent;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: none;
+}
+
+.games-content {
+  position: relative;
+  z-index: 1;
+  padding-top: 24px;
 }
 
 .games-selector {
