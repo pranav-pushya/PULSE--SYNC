@@ -5933,6 +5933,18 @@ body {
   border: 1px solid rgba(192, 38, 211, 0.3);
   font-weight: 600;
 }
+
+#welcome-toast {
+  position: fixed;
+  top: 72px;
+  right: 20px;
+  z-index: 99997;
+  background: rgba(14,12,35,0.95);
+  border: 1px solid rgba(0,208,132,0.35);
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 13px;
+  color: #fff;
   backdrop-filter: blur(16px);
   box-shadow: 0 8px 30px rgba(0,0,0,0.4);
   animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
@@ -5943,7 +5955,7 @@ body {
 @keyframes toastIn {
   from { transform: translateX(120%); opacity: 0; }
   to   { transform: translateX(0);    opacity: 1; }
-} */ 
+} 
 
 /* ═══════════════════════════════════════
    Subpage Navigation (Finance, Science, Discover, Games)
