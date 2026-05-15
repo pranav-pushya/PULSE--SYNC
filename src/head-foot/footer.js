@@ -84,10 +84,13 @@ export function createFooter() {
   `;
 document.body.insertAdjacentHTML('beforeend', footerHTML);
 
-  // ─── Feedback button BOM logic ───
-  document.addEventListener('click', function(e) {
-    const btn = e.target.closest('#footer-feedback-btn');
-    if (!btn) return;
-    window.open('/feedback.html', '_blank');
-  });
+  // ── Feedback button BOM logic ──
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('footer-feedback-btn');
+  if (btn) {
+    btn.onclick = function() {
+      window.open('/feedback.html', '_blank');
+    };
+  }
+});
 }
