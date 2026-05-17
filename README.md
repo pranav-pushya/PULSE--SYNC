@@ -190,10 +190,11 @@ For Netlify: add keys via **Site Settings → Environment Variables**.
 
 ## 👥 Team — Group 2G3
 
-| Role                     | Name             |
-| ------------------------ | ---------------- |
-| 🧑‍💻 Team Lead & Developer | Pranav Pushya    |
-| 🎨 UI Designer           | Shubhangi Savant |
+| Role                           | Name             |
+| ------------------------------ | ---------------- |
+| 🧑‍💻 Team Lead & Developer      | Pranav Pushya    |
+| 🎨 UI Designer                | Shubhangi Savant |
+| 🎨 HTML Structure and Linking | Atharva Bhandari |
 
 **Institution:** Chitkara University, Punjab  
 **Program:** B.Tech CSE (AI/ML) — Semester 2  
